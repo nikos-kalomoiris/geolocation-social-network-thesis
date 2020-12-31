@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#009b89</color>
+    <color name="colorPrimaryMiddle">#017a6c</color>
+    <color name="colorPrimaryDark">#005b51</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="colorDivider">#aaaaaa</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorPolylineDefault">#8F8F8F</color>
+    <color name="colorPolylineHighlighted">#5D97F2</color>
+</resources>

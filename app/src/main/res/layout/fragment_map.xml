@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:id="@+id/mapFragment">
+
+
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/mapView"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <SearchView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/searchLocation"
+        android:layout_margin="14dp"
+        android:elevation="5dp"
+        android:queryHint="Search Location..."
+        android:background="@color/colorWhite"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/target"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_add_marker_png"
+        android:layout_marginBottom="26dp"
+        android:visibility="gone"/>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabAddEvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_gravity="end|bottom"
+        android:layout_marginBottom="139dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:visibility="invisible"
+        app:backgroundTint="@color/colorPrimaryDark"
+        app:iconSize="16dp"
+        app:iconTint="@color/colorWhite"
+        app:icon="@drawable/ic_fab_event"/>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabAddNote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginBottom="82dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="invisible"
+        app:backgroundTint="@color/colorPrimaryMiddle"
+        app:iconSize="16dp"
+        app:iconTint="@color/colorWhite"
+        app:icon="@drawable/ic_fab_note"/>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabMap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        app:backgroundTint="@color/colorPrimary"
+        app:fabSize="normal"
+        app:iconTint="@color/colorWhite"
+        app:icon="@drawable/ic_fab_add"/>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabCancelDirection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        app:backgroundTint="@color/colorPrimary"
+        app:fabSize="normal"
+        app:iconTint="@color/colorWhite"
+        app:icon="@drawable/ic_fab_add"
+        android:visibility="invisible"/>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/addMarkerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginEnd="40dp"
+        android:gravity="center"
+        android:backgroundTint="@color/colorPrimary"
+        app:icon="@drawable/ic_accept"
+        app:iconTint="@color/colorWhite"
+        android:visibility="gone"
+        />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/cancelMarkerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginStart="40dp"
+        android:gravity="center"
+        android:backgroundTint="@color/colorAccent"
+        app:icon="@drawable/ic_decline"
+        app:iconTint="@color/colorWhite"
+        android:visibility="gone"
+        />
+
+</FrameLayout>
