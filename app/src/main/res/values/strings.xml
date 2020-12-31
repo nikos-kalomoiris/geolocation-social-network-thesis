@@ -17,6 +17,8 @@
     <string name="requests_list_collection">Request List</string>
     <string name="notes_collection">Notes</string>
     <string name="events_collection">Events</string>
+    <string name="chat_rooms_collection">Chat Rooms</string>
+    <string name="messages_collection">Messages</string>
     <!--Tab Names-->
     <string name="map_tab">Map</string>
     <string name="profile_tab">Profile</string>

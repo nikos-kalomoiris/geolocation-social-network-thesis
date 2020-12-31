@@ -1,27 +1,31 @@
 package com.example.thesis.DatabaseModels;
 
-import androidx.annotation.NonNull;
+import android.net.Uri;
 
-import com.google.firebase.Timestamp;
+import androidx.annotation.NonNull;
 
 public class Message {
 
-    private String senderId;
+    private User sender;
     private String message;
-    private Timestamp timestamp;
+    private String timestamp;
 
-    public Message(String senderId, String message, Timestamp timestamp) {
-        this.senderId = senderId;
+    public Message() {
+
+    }
+
+    public Message(User sender, String message, String timestamp) {
+        this.sender = sender;
         this.message = message;
         this.timestamp = timestamp;
     }
 
-    public void setSenderId(String senderId) {
-        this.senderId = senderId;
+    public User getSender() {
+        return sender;
     }
 
-    public String getSenderId() {
-        return senderId;
+    public void setSender(User sender) {
+        this.sender = sender;
     }
 
     public void setMessage(String message) {
@@ -32,11 +36,11 @@ public class Message {
         return message;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 
-    public Timestamp getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 

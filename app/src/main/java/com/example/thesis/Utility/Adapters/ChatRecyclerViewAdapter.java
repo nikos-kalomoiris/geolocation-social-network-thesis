@@ -1,6 +1,7 @@
 package com.example.thesis.Utility.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.thesis.DatabaseModels.Message;
-import com.example.thesis.DatabaseModels.User;
 import com.example.thesis.R;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
 
@@ -25,22 +24,27 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
     private final int RECEIVED_MESSAGE = 2;
 
     private Context context;
-    private ArrayList<Message> messageList;
+    private ArrayList<Message> messageList = new ArrayList<>();
 
     public  ChatRecyclerViewAdapter(Context context, ArrayList<Message> messageList) {
         this.context = context;
-        this.messageList = messageList;
+        this.messageList.addAll(messageList);
     }
 
     @Override
     public int getItemViewType(int position) {
-
-        if(messageList.get(position).getSenderId().equals(FirebaseAuth.getInstance().getUid())) {
-            return SENT_MESSAGE;
+        Log.d("SingleCh", "Start of item type");
+        if(messageList.size() > 0) {
+            if(messageList.get(position).getSender().getuId().equals(FirebaseAuth.getInstance().getUid())) {
+                Log.d("SingleCh", "SENT_MESSAGE");
+                return SENT_MESSAGE;
+            }
+            else {
+                Log.d("SingleCh", "RECEIVED_MESSAGE");
+                return RECEIVED_MESSAGE;
+            }
         }
-        else {
-            return RECEIVED_MESSAGE;
-        }
+        return 0;
     }
 
     @NonNull
@@ -57,7 +61,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
         else if(viewType == RECEIVED_MESSAGE) {
             LayoutInflater inflater = LayoutInflater.from(context);
             view = inflater.inflate(R.layout.message_container_left, parent, false);
-            return new receivedMessageHolder(view);
+            return new ReceivedMessageHolder(view);
         }
 
         return null;
@@ -66,6 +70,24 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
+        if(holder.getItemViewType() == SENT_MESSAGE) {
+            Log.d("SingleCh", "Setting");
+            Log.d("SingleCh", messageList.get(position).getMessage() + " | " + (messageList.get(position).getTimestamp()));
+            ((SentMessageHolder) holder).message.setText(messageList.get(position).getMessage());
+            Log.d("SingleCh", ((SentMessageHolder) holder).message.getText().toString());
+            ((SentMessageHolder) holder).timestamp.setText(messageList.get(position).getTimestamp());
+            Log.d("SingleCh", ((SentMessageHolder) holder).timestamp.getText().toString());
+        }
+        else if(holder.getItemViewType() == RECEIVED_MESSAGE) {
+            ((ReceivedMessageHolder) holder).message.setText(messageList.get(position).getMessage());
+            ((ReceivedMessageHolder) holder).timestamp.setText(messageList.get(position).getTimestamp());
+            ((ReceivedMessageHolder) holder).name.setText(messageList.get(position).getSender().getuDisplayName());
+            Glide.with(context)
+                    .load(messageList.get(position).getSender().getuIconUrl())
+                    //.apply(new RequestOptions().override(200, 200))
+                    .into(((ReceivedMessageHolder) holder).senderImage);
+
+        }
     }
 
     @Override
@@ -75,29 +97,29 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
 
     public class SentMessageHolder extends RecyclerView.ViewHolder{
 
-        ImageView profileImage;
-        TextView name, email;
+        TextView timestamp, message;
 
         public SentMessageHolder(@NonNull View itemView) {
             super(itemView);
 
-            profileImage = itemView.findViewById(R.id.profileImageList);
-            name = itemView.findViewById(R.id.nameTextList);
-            email = itemView.findViewById(R.id.emailTextList);
+            message = itemView.findViewById(R.id.messageBody);
+            timestamp = itemView.findViewById(R.id.messageTimestamp);
         }
     }
 
-    public class receivedMessageHolder extends RecyclerView.ViewHolder{
+    public class ReceivedMessageHolder extends RecyclerView.ViewHolder{
 
-        ImageView profileImage;
-        TextView name, email;
+        ImageView senderImage;
+        TextView name, message, timestamp;
 
-        public receivedMessageHolder(@NonNull View itemView) {
+        public ReceivedMessageHolder(@NonNull View itemView) {
             super(itemView);
 
-            profileImage = itemView.findViewById(R.id.profileImageList);
-            name = itemView.findViewById(R.id.nameTextList);
-            email = itemView.findViewById(R.id.emailTextList);
+            senderImage = itemView.findViewById(R.id.senderImage);
+            name = itemView.findViewById(R.id.senderName);
+            message = itemView.findViewById(R.id.senderMessageBody);
+            timestamp = itemView.findViewById(R.id.senderTimestamp);
+
         }
     }
 }
