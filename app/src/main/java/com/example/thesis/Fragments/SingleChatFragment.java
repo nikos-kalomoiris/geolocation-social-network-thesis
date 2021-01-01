@@ -1,17 +1,15 @@
 package com.example.thesis.Fragments;
 
 import android.os.Bundle;
-import android.provider.ContactsContract;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.arch.core.executor.DefaultTaskExecutor;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,8 +25,11 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class SingleChatFragment extends Fragment {
 
@@ -37,11 +38,14 @@ public class SingleChatFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private ChatRecyclerViewAdapter adapter;
+    private static Boolean hasEnded = false;
 
     private EditText messageInput;
     private MaterialButton sendBtn;
 
     DatabaseReference chatRoomRef;
+    Query chatRoomSingleListener;
+    Query fetchFirstMessages;
 
 
     @Override
@@ -51,6 +55,19 @@ public class SingleChatFragment extends Fragment {
                 .child(getString(R.string.chat_rooms_collection))
                 .child("1111")
                 .child(getString(R.string.messages_collection));
+
+        fetchFirstMessages = dbController.getDatabase().getReference()
+                .child(getString(R.string.chat_rooms_collection))
+                .child("1111")
+                .child(getString(R.string.messages_collection))
+                .orderByChild("timestamp")
+                .limitToLast(20);
+
+        chatRoomSingleListener = dbController.getDatabase().getReference()
+                .child(getString(R.string.chat_rooms_collection))
+                .child("1111")
+                .child(getString(R.string.messages_collection))
+                .limitToLast(1);
     }
 
     @Nullable
@@ -62,7 +79,16 @@ public class SingleChatFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
-        //recyclerView.setHasFixedSize(true);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (!recyclerView.canScrollVertically(-1) && newState==RecyclerView.SCROLL_STATE_DRAGGING) {
+                    fetchMessages();
+                }
+            }
+        });
 
         Log.d("SingleCh", "Created");
 
@@ -72,18 +98,45 @@ public class SingleChatFragment extends Fragment {
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                User user = MainActivity.userObj;
-                Message message = new Message(user, messageInput.getText().toString(), String.valueOf(getTimestamp()));
-                sendMessage(message);
+                if(!TextUtils.isEmpty(messageInput.getText())) {
+                    User user = MainActivity.userObj;
+                    Message message = new Message(user, messageInput.getText().toString(), String.valueOf(getTimestamp()));
+                    messageInput.setText("");
+                    sendMessage(message);
+                }
             }
         });
 
-        setMessagesListener();
+        getFirstMessages();
         return view;
     }
 
+    private void getFirstMessages() {
+        fetchFirstMessages.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int index = 0;
+                for(DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
+                    Message message = messageSnapshot.getValue(Message.class);
+                    messagesList.add(message);
+                    Log.d("MessageList", messagesList.get(index).getMessage());
+                    index++;
+                }
+                adapter = new ChatRecyclerViewAdapter(getContext(), messagesList);
+                recyclerView.setAdapter(adapter);
+                messagesList.remove(messagesList.size() - 1);
+                setMessagesListener();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void setMessagesListener() {
-        chatRoomRef.addChildEventListener(new ChildEventListener() {
+        chatRoomSingleListener.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Message message = dataSnapshot.getValue(Message.class);
@@ -112,6 +165,47 @@ public class SingleChatFragment extends Fragment {
 
             }
         });
+    }
+
+    private void fetchMessages() {
+
+        Query fetchMessages = dbController.getDatabase().getReference()
+                .child(getString(R.string.chat_rooms_collection))
+                .child("1111")
+                .child(getString(R.string.messages_collection))
+                .orderByChild("timestamp")
+                .endAt(messagesList.get(0).getTimestamp())
+                .limitToLast(20);
+
+        if(!hasEnded) {
+            fetchMessages.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    ArrayList<Message> messageToAdd = new ArrayList<>();
+                    for(DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
+                        Message message = messageSnapshot.getValue(Message.class);
+                        messageToAdd.add(0, message);
+                    }
+                    Collections.reverse(messageToAdd);
+                    messageToAdd.remove(messageToAdd.size() - 1);
+                    messagesList.addAll(0, messageToAdd);
+                    adapter.updateAdapter(messagesList);
+
+                    if(dataSnapshot.getChildrenCount() <= 19) {
+                        hasEnded = true;
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.e("Error", databaseError.getMessage());
+                }
+            });
+        }
+
+
+
     }
 
     private void sendMessage(Message message) {
