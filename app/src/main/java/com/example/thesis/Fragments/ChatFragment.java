@@ -34,7 +34,8 @@ public class ChatFragment extends Fragment {
 
     private void initFragment() {
         MainActivity mainActivity = MainActivity.instance;
-        SingleChatFragment chatListFragment = new SingleChatFragment();
+        //SingleChatFragment chatListFragment = new SingleChatFragment();
+        ChatListFragment chatListFragment = new ChatListFragment();
         fragmentManager = mainActivity.fragmentTransaction(chatListFragment, R.id.chatFragmentHolder,"ChatList");
     }
 

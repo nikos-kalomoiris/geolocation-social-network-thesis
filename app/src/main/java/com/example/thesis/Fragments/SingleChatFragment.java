@@ -124,7 +124,10 @@ public class SingleChatFragment extends Fragment {
                 }
                 adapter = new ChatRecyclerViewAdapter(getContext(), messagesList);
                 recyclerView.setAdapter(adapter);
-                messagesList.remove(messagesList.size() - 1);
+                if(messagesList.size() > 0) {
+                    messagesList.remove(messagesList.size() - 1);
+                }
+
                 setMessagesListener();
             }
 

@@ -51,11 +51,9 @@ public class ParticipantsRecyclerViewAdapter extends RecyclerView.Adapter<Partic
             @Override
             public void onClick(View v) {
                 if(holder.checkBox.isChecked()) {
-                    Log.d("participants", "Added: " + userList.get(position).getuDisplayName());
                     selectedUsers.add(userList.get(position));
                 }
                 else {
-                    Log.d("participants", "Removed: " + userList.get(position).getuDisplayName());
                     selectedUsers.remove(userList.get(position));
                 }
             }
