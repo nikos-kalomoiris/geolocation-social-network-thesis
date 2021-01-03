@@ -8,14 +8,14 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.thesis.MainActivity;
 import com.example.thesis.R;
+import com.example.thesis.SingleChatActivity;
 
 public class ChatFragment extends Fragment {
 
-    private FragmentManager fragmentManager;
+    private static FragmentManager fragmentManager;
 
     // Store instance variables based on arguments passed
     @Override
@@ -34,16 +34,17 @@ public class ChatFragment extends Fragment {
 
     private void initFragment() {
         MainActivity mainActivity = MainActivity.instance;
-        //SingleChatFragment chatListFragment = new SingleChatFragment();
+        //SingleChatActivity chatListFragment = new SingleChatActivity();
         ChatListFragment chatListFragment = new ChatListFragment();
         fragmentManager = mainActivity.fragmentTransaction(chatListFragment, R.id.chatFragmentHolder,"ChatList");
     }
 
-    public void changeFragment() {
+    public void changeFragment(Bundle bundle) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        AddParticipantsFragment participantsFragment = new AddParticipantsFragment();
+        SingleChatActivity singleChatFragment = new SingleChatActivity();
+        //singleChatFragment.setArguments(bundle);
         fragmentTransaction.addToBackStack("Frag");
-        fragmentTransaction.replace(R.id.fragmentContainer, participantsFragment);
+        //fragmentTransaction.replace(R.id.chatFragmentHolder, singleChatFragment);
         fragmentTransaction.commit();
     }
 }

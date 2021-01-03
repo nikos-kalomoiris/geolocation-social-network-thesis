@@ -1,8 +1,9 @@
 package com.example.thesis.DatabaseModels;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ChatRoom {
+public class ChatRoom implements Serializable {
 
     private ArrayList<User> chatRoomUsers = new ArrayList<>();
     private String chatRoomId, chatRoomName, lastMessage, lastUserMessageId;

@@ -8,6 +8,8 @@
     <string name="add_note_activity">Add Note</string>
     <string name="note_details_activity">Note Details</string>
     <string name="event_details_activity">Event Details</string>
+    <string name="create_chat_room_activity">Create Chat Room</string>
+    <string name="single_chat_activity">Chat</string>
     <!--Button Texts-->
     <string name="logout_button_text">Logout</string>
     <!--Database Collection Names-->

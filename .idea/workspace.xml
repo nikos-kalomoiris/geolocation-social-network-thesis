@@ -28,8 +28,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="41910074-3dcb-42da-b15a-1c80a2036faa" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/DatabaseModels/ChatRoom.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/chat_list_component.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_create_chat_room.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.6.4/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.6.4/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.6.4/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.6.4/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.6.4/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.6.4/fileHashes/fileHashes.bin" afterDir="false" />
@@ -41,11 +40,19 @@
       <change beforePath="$PROJECT_DIR$/.gradle/5.6.4/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.6.4/javaCompile/taskHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/CreateChatRoomActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/CreateChatRoomActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/DatabaseModels/ChatRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/DatabaseModels/ChatRoom.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Fragments/ChatFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Fragments/ChatFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Fragments/ChatListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Fragments/ChatListFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Fragments/SingleChatFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Fragments/SingleChatFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Fragments/SingleChatFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/SingleChatActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Utility/Adapters/ChatListRecyclerViewAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Utility/Adapters/ChatListRecyclerViewAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Utility/Adapters/ParticipantsRecyclerViewAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Utility/Adapters/ParticipantsRecyclerViewAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Utility/Adapters/FragmentPagerAdapter/MainPagerAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Utility/Adapters/FragmentPagerAdapter/MainPagerAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/chat_list_component.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/chat_list_component.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_chat_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_chat_list.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_single_chat.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_single_chat.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -111,8 +118,8 @@
         <option value="layoutResourceFile_vertical" />
         <option value="valueResourceFile" />
         <option value="resourceFile" />
-        <option value="layoutResourceFile" />
         <option value="Class" />
+        <option value="layoutResourceFile" />
       </list>
     </option>
   </component>
@@ -131,7 +138,7 @@
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="ApkExportedModule" value="app" />
     <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="Pixel_XL_API_29" />
-    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2021-01-01T17:06:31.796Z" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2021-01-03T17:32:30.646Z" />
     <property name="ExportApk.ApkPath" value="D:\AndroidProjects\Thesis\app" />
     <property name="ExportApk.BuildVariants" value="release" />
     <property name="ExportApk.SignV1" value="true" />
@@ -152,11 +159,10 @@
     <option name="LAST_EDITED_BUILD_TYPE" value="release" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\AndroidProjects\Thesis\app\src\release\res\values" />
+    <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\AndroidProjects\Thesis\app\src\main\res\values" />
-      <recent name="D:\AndroidProjects\Thesis\app\src\debug\res\values" />
       <recent name="D:\AndroidProjects\Thesis\app\src\main\res\layout" />
+      <recent name="D:\AndroidProjects\Thesis\app" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="com.example.thesis" />
@@ -164,10 +170,11 @@
     <key name="android.template.packageName">
       <recent name="com.example.thesis.Fragments" />
     </key>
-    <key name="MoveFile.RECENT_KEYS">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\AndroidProjects\Thesis\app\src\release\res\values" />
       <recent name="D:\AndroidProjects\Thesis\app\src\main\res\values" />
+      <recent name="D:\AndroidProjects\Thesis\app\src\debug\res\values" />
       <recent name="D:\AndroidProjects\Thesis\app\src\main\res\layout" />
-      <recent name="D:\AndroidProjects\Thesis\app" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -339,7 +346,14 @@
       <option name="project" value="LOCAL" />
       <updated>1609538047772</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Chat rooms initial architecture.">
+      <created>1609608044436</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1609608044436</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -360,6 +374,7 @@
     <MESSAGE value="Pre chat" />
     <MESSAGE value="Single chat view" />
     <MESSAGE value="Chat with lazy load" />
-    <option name="LAST_COMMIT_MESSAGE" value="Chat with lazy load" />
+    <MESSAGE value="Chat rooms initial architecture." />
+    <option name="LAST_COMMIT_MESSAGE" value="Chat rooms initial architecture." />
   </component>
 </project>

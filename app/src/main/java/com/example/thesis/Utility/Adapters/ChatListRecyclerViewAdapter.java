@@ -23,10 +23,12 @@ public class ChatListRecyclerViewAdapter extends RecyclerView.Adapter<ChatListRe
 
     private Context context;
     private ArrayList<ChatRoom> chatRoomList = new ArrayList<>();
+    private OnChatRoomClickListener mOnChatRoomClickListener;
 
-    public  ChatListRecyclerViewAdapter(Context context, List<ChatRoom> chatRoomList) {
+    public  ChatListRecyclerViewAdapter(Context context, List<ChatRoom> chatRoomList, OnChatRoomClickListener mOnChatRoomClickListener) {
         this.context = context;
         this.chatRoomList.addAll(chatRoomList);
+        this.mOnChatRoomClickListener = mOnChatRoomClickListener;
     }
 
     @NonNull
@@ -34,18 +36,20 @@ public class ChatListRecyclerViewAdapter extends RecyclerView.Adapter<ChatListRe
     public ChatListRecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.chat_list_component, parent, false);
-        return new ChatListRecyclerViewAdapter.ViewHolder(view);
+        return new ChatListRecyclerViewAdapter.ViewHolder(view, mOnChatRoomClickListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ChatListRecyclerViewAdapter.ViewHolder holder, int position) {
 
-        if(chatRoomList.size() > 2) {
-
+        if(chatRoomList.get(position).getChatRoomUsers().size() > 2) {
+            Glide.with(context)
+                    .load(R.drawable.ic_friend_list)
+                    .into(holder.chatRoomImage);
         }
         else {
             for(User user: chatRoomList.get(position).getChatRoomUsers()) {
-                if(user.getuId().equals(FirebaseAuth.getInstance().getUid())) {
+                if(!user.getuId().equals(FirebaseAuth.getInstance().getUid())) {
                     Glide.with(context)
                             .load(user.getuIconUrl())
                             .into(holder.chatRoomImage);
@@ -61,22 +65,41 @@ public class ChatListRecyclerViewAdapter extends RecyclerView.Adapter<ChatListRe
         }
     }
 
+    public void updateChatRoomList(ChatRoom newChatRoom) {
+        chatRoomList.add(newChatRoom);
+        this.notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         return this.chatRoomList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        OnChatRoomClickListener chatRoomClickListener;
 
         ImageView chatRoomImage;
         TextView chatRoomName, lastMessage;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, OnChatRoomClickListener chatRoomClickListener) {
             super(itemView);
 
             chatRoomImage = itemView.findViewById(R.id.chatRoomImage);
             chatRoomName = itemView.findViewById(R.id.chatRoomName);
             lastMessage = itemView.findViewById(R.id.chatRoomLastMessage);
+            this.chatRoomClickListener = chatRoomClickListener;
+
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            chatRoomClickListener.onChatRoomClick(getAdapterPosition());
+        }
+    }
+
+    public interface OnChatRoomClickListener {
+        void onChatRoomClick(int position);
     }
 }
