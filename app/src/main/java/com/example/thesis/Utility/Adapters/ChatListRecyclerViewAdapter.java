@@ -108,6 +108,7 @@ public class ChatListRecyclerViewAdapter extends RecyclerView.Adapter<ChatListRe
                 chatRoomList.get(index).setLastUserMessageId(lastMessageSenderId);
                 chatRoomList.get(index).setLastMessageUserName(lastMessageSenderName);
             }
+            index++;
         }
         this.notifyDataSetChanged();
     }

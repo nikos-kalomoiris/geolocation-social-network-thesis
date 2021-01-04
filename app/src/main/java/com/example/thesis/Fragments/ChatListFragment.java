@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,6 +41,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -50,7 +53,6 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
     private RecyclerView recyclerView;
     public static ChatListRecyclerViewAdapter adapter;
     private ArrayList<ChatRoom> chatRooms = new ArrayList<>();
-    private ChatFragment chatFragment;
 
     private ExtendedFloatingActionButton createChatButton;
 
@@ -64,8 +66,6 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat_list, container, false);
-
-        chatFragment = new ChatFragment();
 
         createChatButton = (ExtendedFloatingActionButton) view.findViewById(R.id.createChatFab);
 
@@ -106,15 +106,66 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
                 }
 
                 chatRoomUsers.add(MainActivity.userObj);
+                final String chatName = chatRoomName;
 
-                HashMap<String, Object> chatRoom = new HashMap<>();
-                chatRoom.put("users", chatRoomUsers);
-                chatRoom.put("chatRoomName", chatRoomName);
-                chatRoom.put(getString(R.string.messages_collection), "");
+                if(chatRoomUsers.size() <= 2) {
+                    chatRoomsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Boolean keyFound = false;
+                            Collections.sort(chatRoomUsers);
+                            String key = chatRoomUsers.get(0).getuId().substring(0, 5) + chatRoomUsers.get(1).getuId().substring(0, 5);
+                            for (DataSnapshot chatRoomSnapshot: dataSnapshot.getChildren()) {
+                                if(chatRoomSnapshot.getKey().equals(key)) {
+                                    keyFound = true;
+                                    break;
+                                }
+                            }
 
-                chatRoomsRef.push().setValue(chatRoom);
+                            if(keyFound) {
+                                int index = 0;
+                                for (ChatRoom chatRoom: chatRooms) {
+                                    if(chatRoom.getChatRoomId().equals(key)) {
+                                        break;
+                                    }
+                                    index++;
+                                }
+                                onChatRoomClick(index);
+                            }
+                            else {
+                                HashMap<String, Object> chatRoom = new HashMap<>();
+                                chatRoom.put("users", chatRoomUsers);
+                                chatRoom.put("chatRoomName", chatName);
+                                chatRoom.put(getString(R.string.messages_collection), "");
+
+                                chatRoomsRef.child(key).setValue(chatRoom);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+                else {
+                    HashMap<String, Object> chatRoom = new HashMap<>();
+                    chatRoom.put("users", chatRoomUsers);
+                    chatRoom.put("chatRoomName", chatRoomName);
+                    chatRoom.put(getString(R.string.messages_collection), "");
+
+                    chatRoomsRef.push().setValue(chatRoom);
+                }
 
             }
+        }
+    }
+
+    public class userIdSorter implements Comparator<User> {
+
+        @Override
+        public int compare(User user1, User user2) {
+            return user1.getuId().compareTo(user2.getuId());
         }
     }
 

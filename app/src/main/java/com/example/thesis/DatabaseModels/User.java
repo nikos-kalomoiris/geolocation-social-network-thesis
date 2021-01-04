@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import java.io.Serializable;
 import java.util.List;
 
-public class User implements Serializable {
+public class User implements Serializable, Comparable<User> {
     private String uDisplayName;
     private String uEmail;
     private String uIconUrl;
@@ -23,15 +23,6 @@ public class User implements Serializable {
         this.uIconUrl = uIconUrl;
         this.uId = uId;
     }
-
-    /*public User(String uDisplayName, String uEmail, String uIconUrl, String uId, ArrayList<UserLocation> uFriendList ,ArrayList<UserLocation> uFriendRequests) {
-        this.uDisplayName = uDisplayName;
-        this.uEmail = uEmail;
-        this.uIconUrl = uIconUrl;
-        this.uId = uId;
-        this.uFriendList.addAll(uFriendList);
-        this.uFriendRequests.addAll(uFriendRequests);
-    }*/
 
     public String getuId() {
         return uId;
@@ -69,22 +60,16 @@ public class User implements Serializable {
 
     }
 
-    /*public void setuFriendRequests(List<UserLocation> friendRequest) {
-        this.uFriendRequests.addAll(friendRequest);
-    }
-
-    public List<UserLocation> getFriendList() {
-        return uFriendList;
-    }
-
-    public List<UserLocation> getFriendRequest() {
-        return uFriendRequests;
-    }*/
     @NonNull
     @Override
     public String toString() {
         return "DisplayName: " + getuDisplayName() + "/n" +
                 "Email: " + getuEmail() + "/n" +
                 "PhotoUrl: " + getuIconUrl() + "/n";
+    }
+
+    @Override
+    public int compareTo(User o) {
+        return (uId.compareTo(o.getuId()));
     }
 }
