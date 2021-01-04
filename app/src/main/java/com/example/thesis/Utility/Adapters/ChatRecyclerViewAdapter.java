@@ -1,6 +1,7 @@
 package com.example.thesis.Utility.Adapters;
 
 import android.content.Context;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,9 @@ import com.example.thesis.R;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
 
@@ -68,13 +71,15 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
+        String timestamp = getDate(Long.parseLong(messageList.get(position).getTimestamp()));
+
         if(holder.getItemViewType() == SENT_MESSAGE) {
             ((SentMessageHolder) holder).message.setText(messageList.get(position).getMessage());
-            ((SentMessageHolder) holder).timestamp.setText(messageList.get(position).getTimestamp());
+            ((SentMessageHolder) holder).timestamp.setText(timestamp);
         }
         else if(holder.getItemViewType() == RECEIVED_MESSAGE) {
             ((ReceivedMessageHolder) holder).message.setText(messageList.get(position).getMessage());
-            ((ReceivedMessageHolder) holder).timestamp.setText(messageList.get(position).getTimestamp());
+            ((ReceivedMessageHolder) holder).timestamp.setText(timestamp);
             ((ReceivedMessageHolder) holder).name.setText(messageList.get(position).getSender().getuDisplayName());
             Glide.with(context)
                     .load(messageList.get(position).getSender().getuIconUrl())
@@ -93,6 +98,13 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
         messageList.clear();
         messageList.addAll(newList);
         this.notifyDataSetChanged();
+    }
+
+    private String getDate(Long timestamp) {
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        calendar.setTimeInMillis(timestamp*1000);
+        String date = DateFormat.format("dd/MM/yy hh:mm", calendar).toString();
+        return date;
     }
 
     public class SentMessageHolder extends RecyclerView.ViewHolder{

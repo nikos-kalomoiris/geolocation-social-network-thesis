@@ -60,10 +60,6 @@ public class CreateChatRoomActivity extends AppCompatActivity {
                 bundle.putSerializable("SelectedUsers", adapter.getSelectedUsers());
                 returnIntent.putExtras(bundle);
 
-                for (User user: adapter.getSelectedUsers()) {
-                    Log.d("Users", user.getuDisplayName());
-                }
-
                 if(adapter.getSelectedUsers().size() > 0) {
                     setResult(Activity.RESULT_OK, returnIntent);
                     finish();

@@ -110,6 +110,7 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
                 HashMap<String, Object> chatRoom = new HashMap<>();
                 chatRoom.put("users", chatRoomUsers);
                 chatRoom.put("chatRoomName", chatRoomName);
+                chatRoom.put(getString(R.string.messages_collection), "");
 
                 chatRoomsRef.push().setValue(chatRoom);
 
@@ -158,37 +159,57 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
                 }
 
                 if(userInChat) {
-                    String chatRoomId = dataSnapshot.getKey();
+                    final String chatRoomId = dataSnapshot.getKey();
                     String chatRoomName = dataSnapshot.child("chatRoomName").getValue(String.class);
 
-                    if(dataSnapshot.child(getString(R.string.messages_collection)).exists()) {
-                        Query lastMessageRef = dataSnapshot.child(getString(R.string.messages_collection))
-                                .getRef()
-                                .limitToLast(1);
-                        lastMessageRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                Message message = dataSnapshot.getValue(Message.class);
-
-                                String lastMessage = message.getMessage();
-                                String lastMessageSenderId = message.getSender().getuId();
-
-                                ChatRoom chatRoom = new ChatRoom(chatRoomId, chatRoomName, chatRoomUsers, lastMessage, lastMessageSenderId);
-                                chatRooms.add(chatRoom);
-                                adapter.updateChatRoomList(chatRoom);
+                    if(chatRoomUsers.size() <= 2 ) {
+                        for(User user: chatRoomUsers) {
+                            if(!user.getuId().equals(FirebaseAuth.getInstance().getUid())) {
+                                chatRoomName = user.getuDisplayName();
                             }
+                        }
+                    }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                                Log.e("Error", databaseError.getMessage());
-                            }
-                        });
-                    }
-                    else {
-                        ChatRoom chatRoom = new ChatRoom(chatRoomId, chatRoomName, chatRoomUsers, "No messages yet...", "");
-                        chatRooms.add(chatRoom);
-                        adapter.updateChatRoomList(chatRoom);
-                    }
+                    Query lastMessageRef = dataSnapshot.child(getString(R.string.messages_collection))
+                            .getRef()
+                            .limitToLast(1);
+
+                    ChatRoom chatRoom = new ChatRoom(chatRoomId, chatRoomName, chatRoomUsers, "", "", "");
+                    chatRooms.add(chatRoom);
+                    adapter.updateChatRoomList(chatRoom);
+
+                    lastMessageRef.addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                            Message message = dataSnapshot.getValue(Message.class);
+
+                            String lastMessage = message.getMessage();
+                            String lastMessageSenderName = message.getSender().getuDisplayName();
+                            String lastMessageSenderId = message.getSender().getuId();
+
+                            adapter.updateLastMessage(lastMessage, chatRoomId, lastMessageSenderName, lastMessageSenderId);
+                        }
+
+                        @Override
+                        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.e("Error", databaseError.getMessage());
+                        }
+                    });
                 }
             }
 
@@ -209,7 +230,7 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                Log.e("Error", databaseError.getMessage());
             }
         });
     }

@@ -61,7 +61,8 @@ public class ChatListRecyclerViewAdapter extends RecyclerView.Adapter<ChatListRe
             holder.lastMessage.setText("Me: " + chatRoomList.get(position).getLastMessage());
         }
         else {
-            holder.lastMessage.setText(chatRoomList.get(position).getLastMessage());
+            holder.lastMessage.setText(chatRoomList.get(position).getLastMessageUserName() +
+                    ": " + chatRoomList.get(position).getLastMessage());
         }
     }
 
@@ -97,6 +98,18 @@ public class ChatListRecyclerViewAdapter extends RecyclerView.Adapter<ChatListRe
         public void onClick(View v) {
             chatRoomClickListener.onChatRoomClick(getAdapterPosition());
         }
+    }
+
+    public void updateLastMessage(String lastMessage, String chatRoomId, String lastMessageSenderName, String lastMessageSenderId) {
+        int index = 0;
+        for(ChatRoom chatRoom: chatRoomList) {
+            if(chatRoom.getChatRoomId().equals(chatRoomId)) {
+                chatRoomList.get(index).setLastMessage(lastMessage);
+                chatRoomList.get(index).setLastUserMessageId(lastMessageSenderId);
+                chatRoomList.get(index).setLastMessageUserName(lastMessageSenderName);
+            }
+        }
+        this.notifyDataSetChanged();
     }
 
     public interface OnChatRoomClickListener {

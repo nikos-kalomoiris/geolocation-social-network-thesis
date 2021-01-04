@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +17,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.thesis.Backend.DatabaseInformationController;
 import com.example.thesis.DatabaseModels.ChatRoom;
 import com.example.thesis.DatabaseModels.Message;
@@ -28,6 +31,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -42,6 +46,8 @@ public class SingleChatActivity extends FragmentActivity {
 
     private EditText messageInput;
     private MaterialButton sendBtn;
+    private TextView singleChatName;
+    private ImageView singleChatImage;
 
     DatabaseReference chatRoomRef;
     Query chatRoomSingleListener;
@@ -52,11 +58,17 @@ public class SingleChatActivity extends FragmentActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_single_chat);
 
         Intent intent = getIntent();
         chatRoom = (ChatRoom) intent.getSerializableExtra("ChatRoom");
 
-        setContentView(R.layout.activity_single_chat);
+        initDbRefs();
+        initViewWidgets();
+        getFirstMessages();
+    }
+
+    private void initDbRefs() {
         chatRoomRef = dbController.getDatabase().getReference()
                 .child(getString(R.string.chat_rooms_collection))
                 .child(chatRoom.getChatRoomId())
@@ -74,6 +86,13 @@ public class SingleChatActivity extends FragmentActivity {
                 .child(chatRoom.getChatRoomId())
                 .child(getString(R.string.messages_collection))
                 .limitToLast(1);
+    }
+
+    private void initViewWidgets() {
+        singleChatName = (TextView) findViewById(R.id.chatName);
+        singleChatImage = (ImageView) findViewById(R.id.chatImage);
+
+        singleChatName.setText(chatRoom.getChatRoomName());
 
         recyclerView = findViewById(R.id.chatMessagesList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -106,8 +125,6 @@ public class SingleChatActivity extends FragmentActivity {
                 }
             }
         });
-
-        getFirstMessages();
     }
 
     private void getFirstMessages() {
