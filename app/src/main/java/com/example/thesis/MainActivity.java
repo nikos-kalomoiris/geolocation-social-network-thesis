@@ -309,9 +309,9 @@ public class MainActivity extends FragmentActivity implements ClickInterface {
     }
 
     //get the activity resources for universal use
-    public static Resources getRes() {
-        return instance.getResources();
-    }
+//    public static Resources getRes() {
+//        return instance.getResources();
+//    }
     //
     public static Context getContext() {
         return getContext();

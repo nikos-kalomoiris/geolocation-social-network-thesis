@@ -43,6 +43,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         eventAuthor = (MaterialTextView) findViewById(R.id.eventOrganizerText);
         eventLocation = (MaterialTextView) findViewById(R.id.eventLocationText);
         eventDate = (MaterialTextView) findViewById(R.id.eventDateText);
+        eventParticipants = (MaterialTextView) findViewById(R.id.eventParticipantsText);
         //noteDuration = (MaterialTextView) findViewById(R.id.eventParticipantsText);
         doneBtn = (MaterialButton) findViewById(R.id.detailsDoneBtn);
 
@@ -65,6 +66,19 @@ public class EventDetailsActivity extends AppCompatActivity {
             eventLocation.setText("Address: Not Found");
         }
         eventDate.setText("Event Date: " + event.getDate());
+
+        String participants = "";
+        int index = 0;
+        for(String user: event.getParticipants()) {
+            if(index == event.getParticipants().size() - 1) {
+                participants += user;
+            }
+            else {
+                participants += user + ", ";
+            }
+        }
+
+        //eventParticipants.setText(participants);
         //noteDuration.setText("Duration: " + note.getDuration());
     }
 

@@ -42,7 +42,7 @@ public class SingleChatActivity extends FragmentActivity {
 
     private RecyclerView recyclerView;
     private ChatRecyclerViewAdapter adapter;
-    private static Boolean hasEnded = false;
+    private Boolean hasEnded = false;
 
     private EditText messageInput;
     private MaterialButton sendBtn;

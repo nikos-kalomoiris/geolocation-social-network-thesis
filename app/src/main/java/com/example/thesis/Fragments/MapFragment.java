@@ -85,7 +85,7 @@ import java.util.List;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback,
         ClusterManager.OnClusterItemInfoWindowClickListener<ClusterMarker>,
-        GoogleMap.OnPolylineClickListener {
+        GoogleMap.OnPolylineClickListener{
 
     private final String DIRECTION_TAG = "Directions";
 
@@ -137,6 +137,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     private Animation fabOpen, fabClose, fabRotateClock, getFabRotateCounterClock;
     private SearchView findLocationSearchView;
     private ImageView target;
+
+    DatabaseReference friendListRef;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -196,22 +198,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             map = googleMap;
             map.setMyLocationEnabled(true);
 
-            Log.d("Debug", "FusedLocationProvider: " + mFusedLocationProviderClient + "| onMapReady - MapFragment");
             setMapUserLocation();
             setNotesListener();
+
             Log.d("Debug", "Location changed. onMapReady - MapFragment");
             Log.d("Debug", "Map is ready");
+
             //Implementing database listeners
             setFriendListListener();
             setRequestListener();
             setEventsListener();
 
             map.setOnPolylineClickListener(this);
-           setClusterManagers();
+
+            setClusterManagers();
         }
         catch (NullPointerException ex) {
             Log.e("Error", ex.getMessage());
         }
+
+    }
+
+    private void setUpDbListeners() {
 
     }
 
@@ -222,7 +230,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
         clusterManagerRenderer = new ClusterManagerRenderer(getActivity(), map, clusterManager);
         clusterManager.setRenderer(clusterManagerRenderer);
-        clusterManager.setOnClusterItemInfoWindowClickListener(this);
+        //clusterManager.setOnClusterItemInfoWindowClickListener(this);
     }
 
     private void initializeMarkerAdd(View view) {
@@ -507,12 +515,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     private void setFriendListListener() {
         clusterMarkers.clear();
-        DatabaseReference friendList = FirebaseDatabase.getInstance().getReference()
+        friendListRef = FirebaseDatabase.getInstance().getReference()
                 .child(getString(R.string.users_collection))
                 .child(user.getUid())
                 .child(getString(R.string.friends_list_collection));
 
-        friendList.addChildEventListener(new ChildEventListener() {
+        friendListRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
@@ -584,7 +592,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("Error", databaseError.getMessage());
+                databaseError.toException().printStackTrace();
             }
         });
     }
@@ -612,7 +620,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                        databaseError.toException().printStackTrace();
                     }
                 });
             }
@@ -647,7 +655,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                        databaseError.toException().printStackTrace();
                     }
                 });
             }
@@ -659,7 +667,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("Error", databaseError.getMessage());
+                databaseError.toException().printStackTrace();
             }
         });
     }
@@ -719,7 +727,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                databaseError.toException().printStackTrace();
             }
         });
     }
@@ -871,7 +879,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
         }
         catch (NullPointerException ex) {
-            Log.e("Error", ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
@@ -895,27 +903,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     private void stopUpdateFriendsLocationRunnable() {
         mHandler.removeCallbacks(mRunnable);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("Debug", "onResume - MapFragment");
-        updateFriendsLocationRunnable();
-        mainPager.setUserInputEnabled(false);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        stopUpdateFriendsLocationRunnable();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d("Debug", "Destroyed - MapFragment");
-        stopUpdateFriendsLocationRunnable();
     }
 
     private void addPathPolylines(DirectionsResult result) {
@@ -1144,5 +1131,61 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             index++;
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("Debug", "onResume - MapFragment");
+        updateFriendsLocationRunnable();
+        mainPager.setUserInputEnabled(false);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopUpdateFriendsLocationRunnable();
+        //friendListRef.removeEventListener();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("Debug", "Destroyed - MapFragment");
+        stopUpdateFriendsLocationRunnable();
+    }
+//    @Override
+//    public void onInfoWindowClick(Marker marker) {
+//        Log.d("Marker", "Clicked");
+//
+//        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//        builder.setMessage("Open Google Maps?")
+//                .setCancelable(true)
+//                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+//                        String latitude = String.valueOf(marker.getPosition().latitude);
+//                        String longitude = String.valueOf(marker.getPosition().longitude);
+//                        Uri gmmIntentUri = Uri.parse("google.navigation:q=" + latitude + "," + longitude);
+//                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+//                        mapIntent.setPackage("com.google.android.apps.maps");
+//
+//                        try{
+//                            if (mapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+//                                startActivity(mapIntent);
+//                            }
+//                        }catch (NullPointerException e){
+//                            Toast.makeText(getActivity(), "Couldn't open map", Toast.LENGTH_SHORT).show();
+//                        }
+//
+//                    }
+//                })
+//                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+//                        dialog.cancel();
+//                    }
+//                });
+//        final AlertDialog alert = builder.create();
+//        alert.show();
+//
+//    }
 }
 

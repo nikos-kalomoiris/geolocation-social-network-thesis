@@ -25,6 +25,7 @@ public class ClusterMarker implements ClusterItem {
     private Note note;
     private Event event;
 
+    //User Marker
     public ClusterMarker(String tag, LatLng position, String title, String snippet, Uri iconPicture, User user) {
         this.tag = tag;
         this.position = position;
@@ -33,7 +34,7 @@ public class ClusterMarker implements ClusterItem {
         this.iconPicture = iconPicture;
         this.user = user;
     }
-
+    //Note Marker
     public ClusterMarker(String tag, Note note, String key) {
         this.tag = tag;
         this.title = note.getNoteTitle();
@@ -42,7 +43,7 @@ public class ClusterMarker implements ClusterItem {
         this.position = new LatLng(note.getGeoPoint().getLatitude(), note.getGeoPoint().getLongitude());
         this.key = key;
     }
-
+    //Event Marker
     public ClusterMarker(String tag, Event event, String key) {
         this.tag = tag;
         this.title = event.getTitle();
@@ -50,6 +51,12 @@ public class ClusterMarker implements ClusterItem {
         this.event = event;
         this.position = new LatLng(event.getGeoPoint().getLatitude(), event.getGeoPoint().getLongitude());
         this.key = key;
+    }
+    //Simple Marker
+    public ClusterMarker(String tag, String title, String snippet) {
+        this.tag = tag;
+        this.title = title;
+        this.snippet = snippet;
     }
 
     public String getTag() {

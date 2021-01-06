@@ -60,6 +60,12 @@ public class ParticipantsRecyclerViewAdapter extends RecyclerView.Adapter<Partic
         });
     }
 
+    public void updateParticipantsList(ArrayList<User> participantsList) {
+        userList.clear();
+        userList.addAll(participantsList);
+        this.notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         return this.userList.size();

@@ -46,6 +46,10 @@ public class AddParticipantsFragment extends Fragment {
 
         ArrayList<User> friendList =  new ArrayList<>();
         FriendListViewModel model = new ViewModelProvider(MapFragment.mapFragmentStore).get(FriendListViewModel.class);
+
+        listAdapter = new ParticipantsRecyclerViewAdapter(getContext(), friendList);
+        recyclerView.setAdapter(listAdapter);
+
         setFriendListUpdateObserver(model, friendList);
         return view;
     }
@@ -58,8 +62,8 @@ public class AddParticipantsFragment extends Fragment {
 
                 friendList.add(marker.getUser());
             }
-            listAdapter = new ParticipantsRecyclerViewAdapter(getContext(), friendList);
-            recyclerView.setAdapter(listAdapter);
+
+            listAdapter.updateParticipantsList(friendList);
         });
     }
 
