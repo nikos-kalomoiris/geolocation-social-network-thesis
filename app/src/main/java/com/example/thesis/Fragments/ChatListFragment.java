@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.thesis.AddFriendActivity;
 import com.example.thesis.CreateChatRoomActivity;
 import com.example.thesis.DatabaseModels.ChatRoom;
 import com.example.thesis.DatabaseModels.Message;
@@ -25,12 +24,7 @@ import com.example.thesis.MainActivity;
 import com.example.thesis.R;
 import com.example.thesis.SingleChatActivity;
 import com.example.thesis.Utility.Adapters.ChatListRecyclerViewAdapter;
-import com.example.thesis.Utility.Adapters.Markers.ClusterMarker;
-import com.example.thesis.Utility.Adapters.ParticipantsRecyclerViewAdapter;
-import com.example.thesis.ViewModels.FriendListViewModel;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -56,9 +50,16 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
 
     private ExtendedFloatingActionButton createChatButton;
 
+    boolean firstTime = true;
+
+    private DatabaseReference chatRoomsRef;
+    private Query lastMessageRef;
+    private ChildEventListener chatRoomsListener, lastMessageListener;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        createChatRoomsListener();
         setChatRoomsListener();
     }
 
@@ -76,9 +77,14 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
         adapter = new ChatListRecyclerViewAdapter(getContext(), chatRooms, this);
         recyclerView.setAdapter(adapter);
 
-        ArrayList<User> friendList =  new ArrayList<>();
-        FriendListViewModel model = new ViewModelProvider(MapFragment.mapFragmentStore).get(FriendListViewModel.class);
-        setFriendListUpdateObserver(model, friendList);
+        createChatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), CreateChatRoomActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivityForResult(intent, LAUNCH_CREATE_CHAT_ACTIVITY);
+            }
+        });
 
         return view;
     }
@@ -169,34 +175,8 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
         }
     }
 
-    private void setFriendListUpdateObserver(FriendListViewModel model, ArrayList<User> friendList) {
-        model.getMarkers().observe(getViewLifecycleOwner(), list -> {
-
-            friendList.clear();
-            for(ClusterMarker marker: list) {
-
-                friendList.add(marker.getUser());
-            }
-        });
-
-        createChatButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CreateChatRoomActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("FriendList", friendList);
-                intent.putExtras(bundle);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivityForResult(intent, LAUNCH_CREATE_CHAT_ACTIVITY);
-            }
-        });
-    }
-
-    private void setChatRoomsListener() {
-        DatabaseReference chatRoomsRef = FirebaseDatabase.getInstance().getReference()
-                .child(getString(R.string.chat_rooms_collection));
-
-        chatRoomsRef.addChildEventListener(new ChildEventListener() {
+    private void createChatRoomsListener() {
+        chatRoomsListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Boolean userInChat = false;
@@ -210,26 +190,39 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
                 }
 
                 if(userInChat) {
+
                     final String chatRoomId = dataSnapshot.getKey();
+                    boolean chatRoomExists = false;
                     String chatRoomName = dataSnapshot.child("chatRoomName").getValue(String.class);
 
-                    if(chatRoomUsers.size() <= 2 ) {
-                        for(User user: chatRoomUsers) {
-                            if(!user.getuId().equals(FirebaseAuth.getInstance().getUid())) {
-                                chatRoomName = user.getuDisplayName();
-                            }
+                    for(ChatRoom chatRoom: chatRooms) {
+                        if(chatRoomId.equals(chatRoom.getChatRoomId())) {
+                            chatRoomExists = true;
+                            break;
                         }
                     }
 
-                    Query lastMessageRef = dataSnapshot.child(getString(R.string.messages_collection))
+                    if(!chatRoomExists) {
+                        if(chatRoomUsers.size() <= 2 ) {
+                            for(User user: chatRoomUsers) {
+                                if(!user.getuId().equals(FirebaseAuth.getInstance().getUid())) {
+                                    chatRoomName = user.getuDisplayName();
+                                }
+                            }
+                        }
+
+
+
+                        ChatRoom chatRoom = new ChatRoom(chatRoomId, chatRoomName, chatRoomUsers, "", "", "");
+                        chatRooms.add(chatRoom);
+                        adapter.updateChatRoomList(chatRoom);
+                    }
+
+                    lastMessageRef = dataSnapshot.child(getString(R.string.messages_collection))
                             .getRef()
                             .limitToLast(1);
 
-                    ChatRoom chatRoom = new ChatRoom(chatRoomId, chatRoomName, chatRoomUsers, "", "", "");
-                    chatRooms.add(chatRoom);
-                    adapter.updateChatRoomList(chatRoom);
-
-                    lastMessageRef.addChildEventListener(new ChildEventListener() {
+                    lastMessageListener = new ChildEventListener() {
                         @Override
                         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                             Message message = dataSnapshot.getValue(Message.class);
@@ -260,7 +253,9 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
                         public void onCancelled(@NonNull DatabaseError databaseError) {
                             Log.e("Error", databaseError.getMessage());
                         }
-                    });
+                    };
+
+                    lastMessageRef.addChildEventListener(lastMessageListener);
                 }
             }
 
@@ -283,7 +278,14 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e("Error", databaseError.getMessage());
             }
-        });
+        };
+    }
+
+    private void setChatRoomsListener() {
+        chatRoomsRef = FirebaseDatabase.getInstance().getReference()
+                .child(getString(R.string.chat_rooms_collection));
+        chatRoomsRef.addChildEventListener(chatRoomsListener);
+        firstTime = false;
     }
 
     @Override
@@ -294,5 +296,27 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
         intent.putExtras(bundle);
         startActivity(intent);
         Log.d("Listener", "Clicked from chatroom: " + chatRooms.get(position).getChatRoomName());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        chatRoomsRef.removeEventListener(chatRoomsListener);
+        lastMessageRef.removeEventListener(lastMessageListener);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        chatRoomsRef.removeEventListener(chatRoomsListener);
+        lastMessageRef.removeEventListener(lastMessageListener);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(!firstTime) {
+            chatRoomsRef.addChildEventListener(chatRoomsListener);
+        }
     }
 }

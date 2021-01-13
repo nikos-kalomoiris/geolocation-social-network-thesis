@@ -55,22 +55,21 @@ public class ClusterManagerRenderer extends DefaultClusterRenderer<ClusterMarker
 
             imageView.setImageResource(icon);
             Bitmap currIcon = iconGenerator.makeIcon();
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(currIcon))
-                    .snippet(item.getSnippet());
-            //markerOptions.snippet(item.getSnippet());
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(currIcon));
         }
         else if(item.getTag().equals("Event")) {
             int icon = R.drawable.ic_fab_event;
 
             imageView.setImageResource(icon);
             Bitmap currIcon = iconGenerator.makeIcon();
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(currIcon))
-                    .snippet(item.getSnippet());
-            //markerOptions.snippet(item.getSnippet());
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(currIcon));
         }
         else if(item.getTag().equals("User")) {
             markerOptions.visible(false);
         }
+
+        markerOptions.snippet(item.getSnippet());
+
 
     }
 
@@ -99,7 +98,11 @@ public class ClusterManagerRenderer extends DefaultClusterRenderer<ClusterMarker
                                 marker.setVisible(true);
                             }
                         });
+
                 break;
+            }
+            case "Marker" : {
+                marker.showInfoWindow();
             }
 
         }

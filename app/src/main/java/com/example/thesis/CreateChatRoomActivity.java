@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -16,12 +17,21 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.thesis.DatabaseModels.User;
+import com.example.thesis.DatabaseModels.UserLocation;
 import com.example.thesis.Fragments.ChatListFragment;
 import com.example.thesis.Fragments.MapFragment;
+import com.example.thesis.Utility.Adapters.FriendsRecyclerViewAdapter;
 import com.example.thesis.Utility.Adapters.Markers.ClusterMarker;
 import com.example.thesis.Utility.Adapters.ParticipantsRecyclerViewAdapter;
 import com.example.thesis.ViewModels.FriendListViewModel;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -30,14 +40,16 @@ public class CreateChatRoomActivity extends AppCompatActivity {
     private MaterialButton createChatBtn;
     private RecyclerView recyclerView;
 
+    private DatabaseReference friendListRef;
+    private ChildEventListener friendsListener;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_chat_room);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Intent intent = getIntent();
-        ArrayList<User> friendList = (ArrayList<User>) intent.getSerializableExtra("FriendList");
+        ArrayList<User> friendList = new ArrayList<>();
 
         initView(friendList);
     }
@@ -50,6 +62,9 @@ public class CreateChatRoomActivity extends AppCompatActivity {
 
         ParticipantsRecyclerViewAdapter adapter = new ParticipantsRecyclerViewAdapter(this, friendList);
         recyclerView.setAdapter(adapter);
+
+        createFriendsListener(friendList, adapter);
+        setFriendListListener();
 
         createChatBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,5 +85,75 @@ public class CreateChatRoomActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void setFriendListListener() {
+        friendListRef = FirebaseDatabase.getInstance().getReference()
+                .child(getString(R.string.users_collection))
+                .child(FirebaseAuth.getInstance().getUid())
+                .child(getString(R.string.friends_list_collection));
+
+        friendListRef.addChildEventListener(friendsListener);
+    }
+
+    private void createFriendsListener(ArrayList<User> friendList, ParticipantsRecyclerViewAdapter listAdapter) {
+        friendsListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                DatabaseReference singleUserLocation = FirebaseDatabase.getInstance().getReference()
+                        .child(getString(R.string.users_location_collection))
+                        .child(dataSnapshot.getValue(String.class));
+
+                singleUserLocation.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        try {
+                            UserLocation userLocation = dataSnapshot.getValue(UserLocation.class);
+                            friendList.add(userLocation.getUser());
+                            listAdapter.updateParticipantsList(friendList);
+
+                        } catch (NullPointerException ex) {
+                            Log.e("Error", ex.getMessage());
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.e("Error", databaseError.getMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                //TODO: pending
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                Log.d("Debug", "Data Deleted");
+
+                for(User user: friendList) {
+                    if(user.getuId().equals(dataSnapshot.getValue(String.class))) {
+                        friendList.remove(user);
+                        break;
+                    }
+                }
+                listAdapter.updateParticipantsList(friendList);
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                //TODO: pending
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                databaseError.toException().printStackTrace();
+            }
+        };
     }
 }

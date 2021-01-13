@@ -53,10 +53,11 @@ public class ClusterMarker implements ClusterItem {
         this.key = key;
     }
     //Simple Marker
-    public ClusterMarker(String tag, String title, String snippet) {
+    public ClusterMarker(String tag, String title, String snippet, LatLng position) {
         this.tag = tag;
         this.title = title;
         this.snippet = snippet;
+        this.position = position;
     }
 
     public String getTag() {

@@ -23,7 +23,6 @@
     </shared>
   </component>
   <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_CUSTOM_FILTER" value="Debug" />
     <option name="TOOL_WINDOW_LOG_LEVEL" value="verbose" />
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
@@ -37,14 +36,18 @@
       <change beforePath="$PROJECT_DIR$/.gradle/5.6.4/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.6.4/javaCompile/javaCompile.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Backend/DatabaseInformationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Backend/DatabaseInformationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/EventDetailsActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/EventDetailsActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Fragments/AddParticipantsFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Fragments/AddParticipantsFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/CreateChatRoomActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/CreateChatRoomActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Fragments/ChatListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Fragments/ChatListFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Fragments/FriendListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Fragments/FriendListFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Fragments/FriendRequestsFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Fragments/FriendRequestsFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Fragments/MapFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Fragments/MapFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/LoginActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/LoginActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/SingleChatActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/SingleChatActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Utility/Adapters/FriendRequestRecyclerViewAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Utility/Adapters/FriendRequestRecyclerViewAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Utility/Adapters/FriendsRecyclerViewAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Utility/Adapters/FriendsRecyclerViewAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Utility/Adapters/Markers/ClusterManagerRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Utility/Adapters/Markers/ClusterManagerRenderer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Utility/Adapters/Markers/ClusterMarker.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Utility/Adapters/Markers/ClusterMarker.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Utility/Adapters/ParticipantsRecyclerViewAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/thesis/Utility/Adapters/ParticipantsRecyclerViewAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -133,7 +136,7 @@
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="ApkExportedModule" value="app" />
     <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="Pixel_XL_API_29" />
-    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2021-01-06T18:23:55.895Z" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2021-01-13T20:23:02.875Z" />
     <property name="ExportApk.ApkPath" value="D:\AndroidProjects\Thesis\app" />
     <property name="ExportApk.BuildVariants" value="release" />
     <property name="ExportApk.SignV1" value="true" />
@@ -363,7 +366,14 @@
       <option name="project" value="LOCAL" />
       <updated>1609799203881</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Pre listeners fix">
+      <created>1609958666754</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1609958666754</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -387,41 +397,50 @@
     <MESSAGE value="Chat Rooms - Single Chat connection 0.1" />
     <MESSAGE value="Chat Rooms - Single Chat connection 0.2 + Last Message" />
     <MESSAGE value="Chat Rooms - Single Chat connection 0.3 + Duplicate Chats" />
-    <option name="LAST_COMMIT_MESSAGE" value="Chat Rooms - Single Chat connection 0.3 + Duplicate Chats" />
+    <MESSAGE value="Pre listeners fix" />
+    <option name="LAST_COMMIT_MESSAGE" value="Pre listeners fix" />
   </component>
   <component name="WindowStateProjectService">
     <state x="574" y="119" key="#com.intellij.ide.util.MemberChooser" timestamp="1609952933226">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="574" y="119" key="#com.intellij.ide.util.MemberChooser/0.0.1536.824@0.0.1536.824" timestamp="1609952933226" />
-    <state x="147" y="0" key="CommitChangelistDialog2" timestamp="1609799198833">
+    <state x="147" y="0" key="CommitChangelistDialog2" timestamp="1609958662484">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="147" y="0" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1609799198833" />
-    <state width="1491" height="320" key="GridCell.Tab.0.bottom" timestamp="1609957684964">
+    <state x="147" y="0" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1609958662484" />
+    <state width="1491" height="380" key="GridCell.Tab.0.bottom" timestamp="1610566992107">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1491" height="320" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1609957684964" />
-    <state width="1491" height="320" key="GridCell.Tab.0.center" timestamp="1609957684964">
+    <state width="1491" height="380" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1610566992107" />
+    <state width="1491" height="380" key="GridCell.Tab.0.center" timestamp="1610566992107">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1491" height="320" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1609957684964" />
-    <state width="1491" height="320" key="GridCell.Tab.0.left" timestamp="1609957684964">
+    <state width="1491" height="380" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1610566992107" />
+    <state width="1491" height="380" key="GridCell.Tab.0.left" timestamp="1610566992106">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1491" height="320" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1609957684964" />
-    <state width="1491" height="320" key="GridCell.Tab.0.right" timestamp="1609957684964">
+    <state width="1491" height="380" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1610566992106" />
+    <state width="1491" height="380" key="GridCell.Tab.0.right" timestamp="1610566992107">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1491" height="320" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1609957684964" />
-    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1609799225264">
+    <state width="1491" height="380" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1610566992107" />
+    <state x="553" y="115" key="RollbackChangesDialog" timestamp="1610391866060">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1609799225264" />
+    <state x="553" y="115" key="RollbackChangesDialog/0.0.1536.824@0.0.1536.824" timestamp="1610391866060" />
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1609958674882">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1609958674882" />
     <state x="471" y="221" key="com.android.tools.idea.run.deployment.ModifyDeviceSetDialog" timestamp="1609845984526">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="471" y="221" key="com.android.tools.idea.run.deployment.ModifyDeviceSetDialog/0.0.1536.824@0.0.1536.824" timestamp="1609845984526" />
+    <state x="426" y="189" key="run.anything.popup" timestamp="1610304747638">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="426" y="189" key="run.anything.popup/0.0.1536.824@0.0.1536.824" timestamp="1610304747638" />
     <state x="431" y="145" width="672" height="678" key="search.everywhere.popup" timestamp="1609795974547">
       <screen x="0" y="0" width="1536" height="824" />
     </state>

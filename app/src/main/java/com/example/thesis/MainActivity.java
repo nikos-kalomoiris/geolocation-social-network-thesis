@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -51,7 +52,7 @@ import static com.example.thesis.Utility.Constants.ERROR_DIALOG_REQUEST;
 import static com.example.thesis.Utility.Constants.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
 import static com.example.thesis.Utility.Constants.PERMISSIONS_REQUEST_ENABLE_GPS;
 
-public class MainActivity extends FragmentActivity implements ClickInterface {
+public class MainActivity extends AppCompatActivity implements ClickInterface {
 
 
     private static final int RC_SIGN_IN = 123;

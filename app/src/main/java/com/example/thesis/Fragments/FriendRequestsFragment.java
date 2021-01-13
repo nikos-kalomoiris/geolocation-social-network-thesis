@@ -3,6 +3,7 @@ package com.example.thesis.Fragments;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -26,6 +27,13 @@ import com.example.thesis.ViewModels.FriendRequestsViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -36,8 +44,11 @@ public class FriendRequestsFragment extends Fragment {
     private RecyclerView recyclerView;
     private MaterialButton addFriendFab;
 
+    ChildEventListener friendRequestListener;
+    DatabaseReference requestList;
+
     public FriendRequestsFragment() {
-        // Required empty public constructor
+
     }
 
 
@@ -61,9 +72,13 @@ public class FriendRequestsFragment extends Fragment {
         });
 
         ArrayList<User> friendRequestList =  new ArrayList<>();
-        FriendRequestsViewModel model = new ViewModelProvider(MapFragment.mapFragmentStore).get(FriendRequestsViewModel.class);
 
-        setFriendRequestUpdateObserver(model, friendRequestList);
+        FriendRequestRecyclerViewAdapter listAdapter = new FriendRequestRecyclerViewAdapter(getContext(), friendRequestList);
+        recyclerView.setAdapter(listAdapter);
+
+        createFriendsRequestListener(listAdapter, friendRequestList);
+        setFriendRequestListener();
+
 
         return view;
     }
@@ -78,16 +93,84 @@ public class FriendRequestsFragment extends Fragment {
         }
     }
 
-    private void setFriendRequestUpdateObserver(FriendRequestsViewModel model, ArrayList<User> friendRequestList) {
-        model.getRequests().observe(getViewLifecycleOwner(), list -> {
-            Log.d("Request List", "Fired From RequestFragment");
-            friendRequestList.clear();
-            for(User user: list) {
-                friendRequestList.add(user);
+    private void setFriendRequestListener() {
+        requestList = FirebaseDatabase.getInstance().getReference()
+                .child(getString(R.string.users_collection))
+                .child(FirebaseAuth.getInstance().getUid())
+                .child(getString(R.string.requests_list_collection));
+
+        requestList.addChildEventListener(friendRequestListener);
+    }
+
+    private void createFriendsRequestListener(FriendRequestRecyclerViewAdapter adapter, ArrayList<User> friendRequestList) {
+        friendRequestListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                DatabaseReference singleUser = FirebaseDatabase.getInstance().getReference()
+                        .child(getString(R.string.users_collection))
+                        .child(dataSnapshot.getValue(String.class));
+
+                singleUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        friendRequestList.add(dataSnapshot.getValue(User.class));
+                        adapter.updateRequestsList(friendRequestList);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        databaseError.toException().printStackTrace();
+                    }
+                });
             }
-            FriendRequestRecyclerViewAdapter listAdapter = new FriendRequestRecyclerViewAdapter(getContext(), friendRequestList);
-            recyclerView.setAdapter(listAdapter);
-        });
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                //TODO: pending
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                DatabaseReference singleUserDel = FirebaseDatabase.getInstance().getReference()
+                        .child(getString(R.string.users_collection))
+                        .child(dataSnapshot.getValue(String.class));
+
+                singleUserDel.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Log.d("Request List", "In Data Change");
+//                        Log.d("Request List", "Removed: " + friendRequests.remove(user));
+                        for(User user: friendRequestList) {
+                            if(user.getuId().equals(dataSnapshot.getValue(User.class).getuId())) {
+                                Log.d("Request List", "Removed: " + friendRequestList.remove(user));
+                                break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        databaseError.toException().printStackTrace();
+                    }
+                });
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                //TODO: pending
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                databaseError.toException().printStackTrace();
+            }
+        };
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        requestList.removeEventListener(friendRequestListener);
     }
 }
 

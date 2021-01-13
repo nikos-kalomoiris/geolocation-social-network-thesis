@@ -54,6 +54,12 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecy
         return this.userList.size();
     }
 
+    public void updateFriendList(ArrayList<User> friendList) {
+        userList.clear();
+        userList.addAll(friendList);
+        this.notifyDataSetChanged();
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         ImageView profileImage;

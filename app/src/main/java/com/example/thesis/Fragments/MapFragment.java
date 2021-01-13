@@ -105,7 +105,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     private ArrayList<ClusterMarker> eventMarkers = new ArrayList<>();
 
     private ArrayList<PolylineData> polylines = new ArrayList<>();
-    private ArrayList<Marker> tripMarkers = new ArrayList<>();
+    private ArrayList<ClusterMarker> tripMarkers = new ArrayList<>();
 
     private ArrayList<User> friendRequests = new ArrayList<>();
     private UserLocation userLocation;
@@ -138,7 +138,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     private SearchView findLocationSearchView;
     private ImageView target;
 
-    DatabaseReference friendListRef;
+    static DatabaseReference friendListRef;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -206,7 +206,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
             //Implementing database listeners
             setFriendListListener();
-            setRequestListener();
             setEventsListener();
 
             map.setOnPolylineClickListener(this);
@@ -230,7 +229,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
         clusterManagerRenderer = new ClusterManagerRenderer(getActivity(), map, clusterManager);
         clusterManager.setRenderer(clusterManagerRenderer);
-        //clusterManager.setOnClusterItemInfoWindowClickListener(this);
+        clusterManager.setOnClusterItemInfoWindowClickListener(this);
     }
 
     private void initializeMarkerAdd(View view) {
@@ -583,81 +582,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 }
                 friendListModel.setMarkers(clusterMarkers);
                 clusterManager.cluster();
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                //TODO: pending
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                databaseError.toException().printStackTrace();
-            }
-        });
-    }
-
-    private void setRequestListener() {
-        DatabaseReference requestList = FirebaseDatabase.getInstance().getReference()
-                .child(getString(R.string.users_collection))
-                .child(user.getUid())
-                .child(getString(R.string.requests_list_collection));
-        Log.d("Request List", "helllo");
-        requestList.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                DatabaseReference singleUser = FirebaseDatabase.getInstance().getReference()
-                        .child(getString(R.string.users_collection))
-                        .child(dataSnapshot.getValue(String.class));
-                Log.d("Request List", dataSnapshot.getValue(String.class));
-
-                singleUser.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        friendRequests.add(dataSnapshot.getValue(User.class));
-                        friendRequestModel.setRequests(friendRequests);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        databaseError.toException().printStackTrace();
-                    }
-                });
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                //TODO: pending
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                DatabaseReference singleUserDel = FirebaseDatabase.getInstance().getReference()
-                        .child(getString(R.string.users_collection))
-                        .child(dataSnapshot.getValue(String.class));
-                Log.d("Request List", "Deleting");
-
-                singleUserDel.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        Log.d("Request List", "User to delete: " + dataSnapshot.getValue(User.class).getuDisplayName());
-//                        User user = dataSnapshot.getValue(User.class);
-                          Log.d("Request List", "In Data Change");
-//                        Log.d("Request List", "Removed: " + friendRequests.remove(user));
-                        for(User user: friendRequests) {
-                            if(user.getuId().equals(dataSnapshot.getValue(User.class).getuId())) {
-                                Log.d("Request List", "Removed: " + friendRequests.remove(user));
-                                break;
-                            }
-                            //Log.d("Request List", "User: " + user.toString());
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        databaseError.toException().printStackTrace();
-                    }
-                });
             }
 
             @Override
@@ -1053,9 +977,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void removeTripMarkers() {
-        for(Marker marker: tripMarkers) {
-            marker.remove();
+        for(ClusterMarker tripMarker: tripMarkers) {
+            clusterManager.removeItem(tripMarker);
         }
+        clusterManager.cluster();
+        tripMarkers.clear();
     }
 
     private void setCameraToRoute(List<LatLng> routeCoordinates) {
@@ -1095,7 +1021,47 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onClusterItemInfoWindowClick(ClusterMarker item) {
-        createMarkerDialog(item);
+        if(item.getTag().equals("Marker")) {
+            gMapsDriveModeIntent(item);
+        }
+        else{
+            createMarkerDialog(item);
+        }
+
+    }
+
+    public void gMapsDriveModeIntent(ClusterMarker item) {
+        Log.d("Marker", "Clicked");
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Open Google Maps?")
+                .setCancelable(true)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        String latitude = String.valueOf(item.getPosition().latitude);
+                        String longitude = String.valueOf(item.getPosition().longitude);
+                        Uri gmmIntentUri = Uri.parse("google.navigation:q=" + latitude + "," + longitude);
+                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                        mapIntent.setPackage("com.google.android.apps.maps");
+
+                        try{
+                            if (mapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                startActivity(mapIntent);
+                            }
+                        }catch (NullPointerException e){
+                            Toast.makeText(getActivity(), "Couldn't open map", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+
     }
 
     @Override
@@ -1115,14 +1081,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 }
 
                 LatLng markerPosition = new LatLng(singlePolyline.getLeg().endLocation.lat, singlePolyline.getLeg().endLocation.lng);
-                Marker marker = map.addMarker(new MarkerOptions()
-                        .position(markerPosition)
-                        .title("Path #" + index)
-                        .snippet("Duration: " + singlePolyline.getLeg().duration)
-                );
+                ClusterMarker marker = new ClusterMarker("Marker",
+                        "Path #" + index,
+                        "Duration: " + singlePolyline.getLeg().duration,
+                        markerPosition);
+
+                clusterManager.addItem(marker);
                 tripMarkers.add(marker);
 
-                marker.showInfoWindow();
+                clusterManager.cluster();
+
+//                Marker classicMarker = clusterManagerRenderer.getClassicMarker(marker);
+//                classicMarker.showInfoWindow();
             }
             else {
                 singlePolyline.getPolyline().setColor(ContextCompat.getColor(getActivity(), R.color.colorPolylineDefault));
@@ -1153,39 +1123,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         Log.d("Debug", "Destroyed - MapFragment");
         stopUpdateFriendsLocationRunnable();
     }
-//    @Override
-//    public void onInfoWindowClick(Marker marker) {
-//        Log.d("Marker", "Clicked");
-//
-//        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//        builder.setMessage("Open Google Maps?")
-//                .setCancelable(true)
-//                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-//                        String latitude = String.valueOf(marker.getPosition().latitude);
-//                        String longitude = String.valueOf(marker.getPosition().longitude);
-//                        Uri gmmIntentUri = Uri.parse("google.navigation:q=" + latitude + "," + longitude);
-//                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-//                        mapIntent.setPackage("com.google.android.apps.maps");
-//
-//                        try{
-//                            if (mapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-//                                startActivity(mapIntent);
-//                            }
-//                        }catch (NullPointerException e){
-//                            Toast.makeText(getActivity(), "Couldn't open map", Toast.LENGTH_SHORT).show();
-//                        }
-//
-//                    }
-//                })
-//                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-//                        dialog.cancel();
-//                    }
-//                });
-//        final AlertDialog alert = builder.create();
-//        alert.show();
-//
-//    }
+
 }
 

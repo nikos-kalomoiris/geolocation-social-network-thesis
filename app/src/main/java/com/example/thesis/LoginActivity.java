@@ -136,6 +136,7 @@ public class LoginActivity extends Activity {
             if (resultCode == RESULT_OK) {
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
+                finish();
             } else {
                 Toast.makeText(this, "" + response.getError().getMessage(), Toast.LENGTH_SHORT).show();
                 signInOptions();

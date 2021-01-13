@@ -73,6 +73,12 @@ public class FriendRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frien
         });
     }
 
+    public void updateRequestsList(ArrayList<User> friendRequestsList) {
+        userRequestList.clear();
+        userRequestList.addAll(friendRequestsList);
+        this.notifyDataSetChanged();
+    }
+
     private void addFriend(User user) {
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
