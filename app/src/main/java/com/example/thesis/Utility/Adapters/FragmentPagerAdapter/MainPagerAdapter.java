@@ -7,7 +7,9 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.thesis.Fragments.ChatFragment;
 import com.example.thesis.Fragments.ChatListFragment;
+import com.example.thesis.Fragments.EventsFragment;
 import com.example.thesis.Fragments.MapFragment;
+import com.example.thesis.Fragments.NotesFragment;
 import com.example.thesis.Fragments.ProfileFragment;
 
 public class MainPagerAdapter extends FragmentStateAdapter {
@@ -23,7 +25,9 @@ public class MainPagerAdapter extends FragmentStateAdapter {
             case 0:
                 return new MapFragment();
             case 1:
-                return new ProfileFragment();
+                return new EventsFragment();
+            case 2:
+                return new NotesFragment();
             default:
                 return new ChatListFragment();
         }
@@ -31,6 +35,6 @@ public class MainPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 3;
+        return 4;
     }
 }

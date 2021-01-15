@@ -1,134 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/charLimitTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:text="CharLimit"
-        app:layout_constraintBottom_toTopOf="@+id/addNoteTitle"
-        app:layout_constraintEnd_toEndOf="parent" />
+    <include
+        layout="@layout/activity_toolbar"
+        android:id="@+id/mainToolbar"/>
 
-    <TextView
-        android:id="@+id/enterNoteTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="44dp"
-        android:text="Enter note title:"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/addNoteTitle"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="64dp"
-        android:gravity="top"
-        android:hint="Enter Title..."
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/enterNoteText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:text="Enter note text:"
-        app:layout_constraintBottom_toTopOf="@+id/addNoteText"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/addNoteText"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_marginHorizontal="16dp"
-        android:gravity="top"
-        android:hint="Enter note..."
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addNoteTitle"
-        app:layout_constraintVertical_bias="0.11"
-        tools:layout_editor_absoluteX="16dp" />
-
-    <TextView
-        android:id="@+id/selectDurationText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="56dp"
-        android:text="Select note time duration: "
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addNoteText" />
-
-    <TextView
-        android:id="@+id/wordLimitText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:text="WordLimit"
-        app:layout_constraintBottom_toTopOf="@+id/addNoteText"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <RadioGroup
-        android:id="@+id/duratioRadioBtnGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/selectDurationText"
-        android:gravity="center"
-        android:layout_marginHorizontal="16dp">
-
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/radioButton30Min"
-            android:layout_width="100dp"
+        <TextView
+            android:id="@+id/charLimitTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="30Min"
-            android:layout_marginLeft="10dp"/>
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="CharLimit"
+            app:layout_constraintBottom_toTopOf="@+id/addNoteTitle"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/radioButton1hr"
-            android:layout_width="100dp"
+        <TextView
+            android:id="@+id/enterNoteTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="1hr"
-            android:layout_marginHorizontal="10dp"/>
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="44dp"
+            android:text="Enter note title:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/radioButton3hr"
-            android:layout_width="100dp"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/addNoteTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="64dp"
+            android:gravity="top"
+            android:hint="Enter Title..."
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/enterNoteText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="Enter note text:"
+            app:layout_constraintBottom_toTopOf="@+id/addNoteText"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/addNoteText"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginHorizontal="16dp"
+            android:gravity="top"
+            android:hint="Enter note..."
+            android:inputType="textPersonName"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addNoteTitle"
+            app:layout_constraintVertical_bias="0.11"
+            tools:layout_editor_absoluteX="16dp" />
+
+        <TextView
+            android:id="@+id/selectDurationText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="56dp"
+            android:text="Select note time duration: "
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addNoteText" />
+
+        <TextView
+            android:id="@+id/wordLimitText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="WordLimit"
+            app:layout_constraintBottom_toTopOf="@+id/addNoteText"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <RadioGroup
+            android:id="@+id/duratioRadioBtnGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/selectDurationText"
             android:gravity="center"
-            android:text="3hr"
-            android:layout_marginRight="10dp"/>
-    </RadioGroup>
+            android:layout_marginHorizontal="16dp">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/addNoteBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="76dp"
-        android:text="Add Note"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/duratioRadioBtnGroup" />
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/radioButton30Min"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="30Min"
+                android:layout_marginLeft="10dp"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/radioButton1hr"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="1hr"
+                android:layout_marginHorizontal="10dp"/>
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/radioButton3hr"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="3hr"
+                android:layout_marginRight="10dp"/>
+        </RadioGroup>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/addNoteBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="76dp"
+            android:text="Add Note"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/duratioRadioBtnGroup" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>
+

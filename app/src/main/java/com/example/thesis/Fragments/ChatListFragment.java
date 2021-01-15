@@ -315,6 +315,7 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
     @Override
     public void onResume() {
         super.onResume();
+        Log.d("Debug", "ChatFragment - onResume");
         if(!firstTime) {
             chatRoomsRef.addChildEventListener(chatRoomsListener);
         }

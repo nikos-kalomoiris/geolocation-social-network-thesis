@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.radiobutton.MaterialRadioButton;
@@ -38,6 +40,10 @@ public class AddNoteActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note);
+        //Setting Toolbar
+        LinearLayout toolBarTemplate = findViewById(R.id.mainToolbar);
+        Toolbar toolbar = toolBarTemplate.findViewById(R.id.mainToolbarTemplate);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //Get view widgets

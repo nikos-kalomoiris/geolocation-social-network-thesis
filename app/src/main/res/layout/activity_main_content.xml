@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_main"
+    tools:context=".MainActivity">
+
+    <include
+        layout="@layout/activity_toolbar"
+        android:id="@+id/mainToolbar"/>
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@color/colorDivider"
+        app:layout_constraintBottom_toBottomOf="@id/mainTab" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/mainTab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_constraintTop_toBottomOf="@+id/mainToolbar"
+        app:tabIndicatorHeight="3dp"
+        app:tabMode="fixed"
+        app:tabPaddingBottom="8dp"
+        app:tabPaddingTop="15dp" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/mainPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mainTab"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!--<?xml version="1.0" encoding="utf-8"?>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/vpPager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.viewpager.widget.PagerTabStrip
+                android:id="@+id/pager_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp" />
+
+        </androidx.viewpager.widget.ViewPager>
+
+    </LinearLayout>-->

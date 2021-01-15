@@ -24,11 +24,16 @@
     <!--Tab Names-->
     <string name="map_tab">Map</string>
     <string name="profile_tab">Profile</string>
+    <string name="events_tab">Events</string>
+    <string name="notes_tab">Notes</string>
     <string name="chat_tab">Chat</string>
     <string name="friend_list_tab">Friend List</string>
     <string name="requests_tab">Friend Requests</string>
     <!--Notification Strings-->
     <string name="notification_title">Thesis location update</string>
     <string name="notification_text">Collecting user location</string>
+    <!--Navigation Drawer Strings-->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
 </resources>

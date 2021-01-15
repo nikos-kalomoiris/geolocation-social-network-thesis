@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:orientation="vertical"
+    android:gravity="bottom"
+    android:background="@color/colorAccent">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="10dp"
+        android:elevation="16dp"
+        app:cardCornerRadius="84dp">
+
+        <ImageView
+            android:id="@+id/drawerProfImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            tools:srcCompat="@tools:sample/avatars"
+            />
+
+    </androidx.cardview.widget.CardView>
+
+
+    <TextView
+        android:id="@+id/drawerProfName"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:textSize="20sp"
+        android:layout_weight="1"
+        android:textColor="@android:color/white"
+        android:text="User name" />
+
+    <TextView
+        android:id="@+id/drawerProfMail"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:textSize="14sp"
+        android:layout_weight="1"
+        android:textColor="@android:color/white"
+        android:text="main@mail.com" />
+</LinearLayout>

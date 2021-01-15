@@ -8,11 +8,13 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.example.thesis.DatabaseModels.User;
 import com.example.thesis.Fragments.FriendRequestsFragment;
@@ -33,6 +35,10 @@ public class AddFriendActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friends);
+        //Setting Toolbar
+        LinearLayout toolBarTemplate = findViewById(R.id.mainToolbar);
+        Toolbar toolbar = toolBarTemplate.findViewById(R.id.mainToolbarTemplate);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         emailInput = (EditText) findViewById(R.id.addFriendInput);

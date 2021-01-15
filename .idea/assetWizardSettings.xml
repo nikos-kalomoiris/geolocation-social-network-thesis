@@ -177,7 +177,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/D:/Program%20Files/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/content/ic_send_black_24dp.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/power_settings_new/baseline_power_settings_new_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -187,7 +187,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_send" />
+                            <entry key="outputName" value="ic_logout" />
                             <entry key="sourceFile" value="C:\Users\nikos\Desktop\search.svg" />
                           </map>
                         </option>

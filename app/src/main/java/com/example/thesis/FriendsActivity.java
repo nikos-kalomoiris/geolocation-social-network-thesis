@@ -3,10 +3,12 @@ package com.example.thesis;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -20,7 +22,12 @@ public class FriendsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
+        //Setting Toolbar
+        LinearLayout toolBarTemplate = findViewById(R.id.mainToolbar);
+        Toolbar toolbar = toolBarTemplate.findViewById(R.id.mainToolbarTemplate);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         ViewPager2 friendViewPager = findViewById(R.id.friendsPager);
         friendViewPager.setAdapter(new FriendsPagerAdapter(this));

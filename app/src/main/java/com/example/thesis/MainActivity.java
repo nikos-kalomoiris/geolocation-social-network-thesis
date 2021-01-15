@@ -6,21 +6,28 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -31,7 +38,6 @@ import com.bumptech.glide.Glide;
 import com.example.thesis.Backend.DatabaseInformationController;
 import com.example.thesis.ForegroundServices.UserLocationUpdateService;
 import com.example.thesis.DatabaseModels.User;
-import com.example.thesis.Fragments.ChatListFragment;
 import com.example.thesis.Fragments.MapFragment;
 import com.example.thesis.Utility.Adapters.FragmentPagerAdapter.MainPagerAdapter;
 import com.example.thesis.Fragments.ProfileFragment;
@@ -42,17 +48,23 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
+
 import static com.example.thesis.Utility.Constants.ERROR_DIALOG_REQUEST;
 import static com.example.thesis.Utility.Constants.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
 import static com.example.thesis.Utility.Constants.PERMISSIONS_REQUEST_ENABLE_GPS;
 
-public class MainActivity extends AppCompatActivity implements ClickInterface {
+public class MainActivity extends AppCompatActivity implements ClickInterface, NavigationView.OnNavigationItemSelectedListener {
 
 
     private static final int RC_SIGN_IN = 123;
@@ -68,15 +80,22 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
     public static MainActivity instance;
     private Location location;
 
+    //UI Elements
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         instance = this;
         setContentView(R.layout.activity_main);
+
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         setPagerAdapter();
         mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
         user = FirebaseAuth.getInstance().getCurrentUser();
+
         Toast.makeText(this, "Successful Login!\n" + user.getEmail(), Toast.LENGTH_SHORT).show();
 
         //Setting the click interface for logout button
@@ -86,6 +105,108 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
         saveUserInfo();
         currInstance = AuthUI.getInstance();
         startLocationService();
+        setDrawerNavigation();
+    }
+
+    private void setDrawerNavigation() {
+        drawerLayout = findViewById(R.id.drawerLayout);
+        navigationView = findViewById(R.id.navView);
+        LinearLayout toolBarTemplate = findViewById(R.id.mainToolbar);
+        toolbar = toolBarTemplate.findViewById(R.id.mainToolbarTemplate);
+
+        setSupportActionBar(toolbar);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,
+                drawerLayout,
+                toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+        navigationView.setNavigationItemSelectedListener(this);
+
+        setProfileInfo(navigationView);
+    }
+
+    private void setProfileInfo(NavigationView navigationView) {
+
+        ImageView profImage = navigationView.getHeaderView(0).findViewById(R.id.drawerProfImage);
+        TextView profName = navigationView.getHeaderView(0).findViewById(R.id.drawerProfName);
+        TextView profEmail = navigationView.getHeaderView(0).findViewById(R.id.drawerProfMail);
+
+        Glide.with(this).load(user.getPhotoUrl()).into(profImage);
+        profName.setText(user.getDisplayName());
+        profEmail.setText(user.getEmail());
+    }
+
+    @Override
+    public void onBackPressed() {
+        //Change back behaviour when drawer is open
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+        else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Log.d("Debug", item.toString());
+        switch (item.toString()) {
+            case "Friends": {
+                Intent intent = new Intent(this, FriendsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                break;
+            }
+            case "Logout": {
+                setLogoutButton();
+                break;
+            }
+        }
+        return false;
+    }
+
+    public void setLogoutButton() {
+        AlertDialog dialog;
+        final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        dialog = builder.create();
+        builder.setMessage("Are you sure you want to logout?")
+                .setCancelable(true)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        AuthUI.getInstance()
+                                .signOut(MainActivity.this)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        callLoginActivity();
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(MainActivity.this,
+                                                "Failed to logout, try again!",
+                                                Toast.LENGTH_SHORT)
+                                                .show();
+                                    }
+                                });
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 
     private void setPagerAdapter() {
@@ -103,10 +224,14 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
                         tab.setIcon(R.drawable.ic_map);
                         break;
                     case 1:
-                        tab.setText(R.string.profile_tab);
-                        tab.setIcon(R.drawable.ic_profile);
+                        tab.setText(R.string.events_tab);
+                        tab.setIcon(R.drawable.ic_fab_event);
                         break;
                     case 2:
+                        tab.setText(R.string.notes_tab);
+                        tab.setIcon(R.drawable.ic_fab_note);
+                        break;
+                    case 3:
                         tab.setText(R.string.chat_tab);
                         tab.setIcon(R.drawable.ic_chat);
                         break;
