@@ -11,6 +11,7 @@
 
 
     <include
+        android:id="@+id/activityMainContent"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         layout="@layout/activity_main_content"/>
@@ -21,6 +22,7 @@
         android:id="@+id/navView"
         android:layout_gravity = "start"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/drawer_menu"/>
+        app:menu="@menu/drawer_menu"
+        app:itemTextAppearance="@style/menu_text_style"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

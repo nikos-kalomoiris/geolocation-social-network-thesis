@@ -7,7 +7,8 @@ import java.util.ArrayList;
 
 public class Event implements Serializable {
 
-    private String title, description, date, authorName, authorId;
+    private String title, description, date;
+    private User author;
     private ArrayList<String> participants = new ArrayList<>();
     private GeoPoint geoPoint;
 
@@ -15,12 +16,12 @@ public class Event implements Serializable {
 
     }
 
-    public Event(String title, String description, String date, String authorName, String authorId, ArrayList<String> participants, GeoPoint geoPoint) {
+    public Event(String title, String description, User author, String date, ArrayList<String> participants,
+                 GeoPoint geoPoint) {
         this.title = title;
         this.description = description;
         this.date = date;
-        this.authorName = authorName;
-        this.authorId = authorId;
+        this.author = author;
         this.participants.addAll(participants);
         this.geoPoint = geoPoint;
     }
@@ -49,20 +50,12 @@ public class Event implements Serializable {
         return date;
     }
 
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
+    public User getAuthor() {
+        return author;
     }
 
-    public String getAuthorName() {
-        return authorName;
-    }
-
-    public void setAuthorId(String authorId) {
-        this.authorId = authorId;
-    }
-
-    public String getAuthorId() {
-        return authorId;
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
     public void setParticipants(ArrayList<String> participants) {

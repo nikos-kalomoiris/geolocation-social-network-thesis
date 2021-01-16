@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -37,10 +38,12 @@ import com.example.thesis.DatabaseModels.Note;
 import com.example.thesis.DatabaseModels.User;
 import com.example.thesis.DatabaseModels.UserLocation;
 import com.example.thesis.EventDetailsActivity;
+import com.example.thesis.Interfaces.OnListOptionsClick;
 import com.example.thesis.MainActivity;
 import com.example.thesis.NoteDetailsActivity;
 import com.example.thesis.Objects.PolylineData;
 import com.example.thesis.R;
+import com.example.thesis.Utility.Adapters.EventsRecyclerViewAdapter;
 import com.example.thesis.Utility.Adapters.Markers.ClusterManagerRenderer;
 import com.example.thesis.Utility.Adapters.Markers.ClusterMarker;
 import com.example.thesis.ViewModels.FriendListViewModel;
@@ -55,12 +58,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -79,13 +81,13 @@ import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback,
         ClusterManager.OnClusterItemInfoWindowClickListener<ClusterMarker>,
-        GoogleMap.OnPolylineClickListener{
+        GoogleMap.OnPolylineClickListener,
+        OnListOptionsClick {
 
     private final String DIRECTION_TAG = "Directions";
 
@@ -156,6 +158,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         //Implementing ViewModel Providers
         friendListModel = new ViewModelProvider(this).get(FriendListViewModel.class);
         friendRequestModel = new ViewModelProvider(this).get(FriendRequestsViewModel.class);
+
+        EventsRecyclerViewAdapter.setOnListOptionsClickInterface(this);
 
         mapFragmentStore = this;
     }
@@ -405,7 +409,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 String eventDesc = data.getStringExtra("desc");
                 String eventDate = data.getStringExtra("date");
                 ArrayList<String> participantsId = data.getStringArrayListExtra("participants");
-                event = new Event(eventTitle, eventDesc, eventDate,user.getDisplayName(), user.getUid(), participantsId, null);
+                event = new Event(eventTitle, eventDesc, MainActivity.userObj, eventDate, participantsId, null);
                 setAddInterface("Set Event");
             }
         }
@@ -752,11 +756,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 Event currEvent = dataSnapshot.getValue(Event.class);
                 String key = dataSnapshot.getKey();
 
-                Log.d("Added", "CurrEvent: " + currEvent.getAuthorName() + " " + currEvent.getTitle());
 
                 for(String participantId: currEvent.getParticipants()) {
 
-                     if(currEvent.getAuthorId().equals(user.getUid())) {
+                     if(currEvent.getAuthor().getuId().equals(user.getUid())) {
                          setEventMarkOnMap(currEvent, key);
                          break;
                      }
@@ -1091,8 +1094,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
                 clusterManager.cluster();
 
-//                Marker classicMarker = clusterManagerRenderer.getClassicMarker(marker);
-//                classicMarker.showInfoWindow();
             }
             else {
                 singlePolyline.getPolyline().setColor(ContextCompat.getColor(getActivity(), R.color.colorPolylineDefault));
@@ -1124,5 +1125,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         stopUpdateFriendsLocationRunnable();
     }
 
+    @Override
+    public void clickLocation(LatLng location) {
+        //Changing to map tab and transitioning to location
+        ConstraintLayout constraintLayout = (ConstraintLayout)((MainActivity)getActivity()).findViewById(R.id.activityMainContent);
+        TabLayout tabs = (TabLayout) constraintLayout.findViewById(R.id.mainTab);
+        tabs.getTabAt(0).select();
+
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 16));
+    }
+
+    @Override
+    public void clickDetails(ClusterMarker event) {
+        openDetails(event);
+    }
 }
 

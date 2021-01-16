@@ -64,7 +64,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         eventTitle.setText(event.getTitle());
         eventDesc.setText(event.getDescription());
-        eventAuthor.setText("Organizer: " + event.getAuthorName());
+        eventAuthor.setText("Organizer: " + event.getAuthor().getuDisplayName());
         if(address != null) {
             eventLocation.setText("Address: " + address);
         }

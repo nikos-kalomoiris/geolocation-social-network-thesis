@@ -309,7 +309,10 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
     public void onPause() {
         super.onPause();
         chatRoomsRef.removeEventListener(chatRoomsListener);
-        lastMessageRef.removeEventListener(lastMessageListener);
+        if(lastMessageListener != null) {
+            lastMessageRef.removeEventListener(lastMessageListener);
+        }
+
     }
 
     @Override
