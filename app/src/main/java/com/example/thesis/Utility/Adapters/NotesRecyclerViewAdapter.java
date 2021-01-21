@@ -12,26 +12,29 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.thesis.Interfaces.OnListOptionsClick;
 import com.example.thesis.R;
 import com.example.thesis.Utility.Adapters.Markers.ClusterMarker;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
 public class NotesRecyclerViewAdapter extends RecyclerView.Adapter<NotesRecyclerViewAdapter.ViewHolder> {
 
     private Context context;
-    private ArrayList<ClusterMarker> eventsList = new ArrayList<>();
+    private ArrayList<ClusterMarker> notesList = new ArrayList<>();
+    private static OnListOptionsClick listOptionsClick;
 
-    public NotesRecyclerViewAdapter(Context context, ArrayList<ClusterMarker> eventsList) {
+    public NotesRecyclerViewAdapter(Context context, ArrayList<ClusterMarker> notesList) {
         this.context = context;
-        this.eventsList.addAll(eventsList);
+        this.notesList.addAll(notesList);
     }
 
     @NonNull
     @Override
     public NotesRecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.events_list_component, parent, false);
+        View view = inflater.inflate(R.layout.notes_list_component, parent, false);
         return new NotesRecyclerViewAdapter.ViewHolder(view);
     }
 
@@ -39,52 +42,60 @@ public class NotesRecyclerViewAdapter extends RecyclerView.Adapter<NotesRecycler
     @Override
     public void onBindViewHolder(@NonNull NotesRecyclerViewAdapter.ViewHolder holder, int position) {
 
-        holder.eventImage.setImageResource(R.drawable.ic_fab_event);
+        holder.noteImage.setImageResource(R.drawable.ic_fab_note);
         Glide.with(context)
-                .load(eventsList.get(position).getEvent().getAuthor().getuIconUrl())
+                .load(notesList.get(position).getNote().getAuthor().getuIconUrl())
                 .into(holder.authorImage);
-        holder.title.setText(eventsList.get(position).getTitle());
-        holder.snippet.setText(eventsList.get(position).getSnippet());
+        holder.title.setText(notesList.get(position).getTitle());
+        holder.snippet.setText(notesList.get(position).getSnippet());
         holder.detailsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                listOptionsClick.clickDetails(notesList.get(position));
             }
         });
 
         holder.locationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                LatLng location = new LatLng(
+                        notesList.get(position).getNote().getGeoPoint().getLatitude(),
+                        notesList.get(position).getNote().getGeoPoint().getLongitude()
+                );
+                listOptionsClick.clickLocation(location);
             }
         });
     }
 
-    public void updateEventsList(ArrayList<ClusterMarker> events) {
-        eventsList.clear();
-        eventsList.addAll(events);
+    public void updateNotesList(ArrayList<ClusterMarker> notes) {
+        notesList.clear();
+        notesList.addAll(notes);
         this.notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        return this.eventsList.size();
+        return this.notesList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView eventImage, authorImage;
+        ImageView noteImage, authorImage;
         TextView title, snippet;
         ImageButton detailsBtn, locationBtn;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            eventImage = itemView.findViewById(R.id.eventImage);
+            noteImage = itemView.findViewById(R.id.noteImage);
             authorImage = itemView.findViewById(R.id.authorImage);
-            title = itemView.findViewById(R.id.eventTitle);
-            snippet = itemView.findViewById(R.id.eventSnippet);
-            detailsBtn = itemView.findViewById(R.id.eventDetailsBtn);
-            locationBtn = itemView.findViewById(R.id.eventLocationBtn);
+            title = itemView.findViewById(R.id.noteTitle);
+            snippet = itemView.findViewById(R.id.noteSnippet);
+            detailsBtn = itemView.findViewById(R.id.noteDetailsBtn);
+            locationBtn = itemView.findViewById(R.id.noteLocationBtn);
         }
+    }
+
+    public static void setOnListOptionsClickInterface(OnListOptionsClick intf) {
+        listOptionsClick = intf;
     }
 }

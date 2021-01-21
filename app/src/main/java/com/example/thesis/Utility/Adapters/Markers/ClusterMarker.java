@@ -38,7 +38,7 @@ public class ClusterMarker implements ClusterItem {
     public ClusterMarker(String tag, Note note, String key) {
         this.tag = tag;
         this.title = note.getNoteTitle();
-        this.snippet = "By: " + note.getAuthorName();
+        this.snippet = "By: " + note.getAuthor().getuDisplayName();
         this.note = note;
         this.position = new LatLng(note.getGeoPoint().getLatitude(), note.getGeoPoint().getLongitude());
         this.key = key;

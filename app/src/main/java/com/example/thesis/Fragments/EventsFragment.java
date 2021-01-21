@@ -81,12 +81,14 @@ public class EventsFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        eventsList.clear();
         eventsRef.removeEventListener(eventsListener);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        eventsList.clear();
         eventsRef.removeEventListener(eventsListener);
     }
 

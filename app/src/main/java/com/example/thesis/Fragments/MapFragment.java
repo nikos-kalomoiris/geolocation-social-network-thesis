@@ -46,6 +46,7 @@ import com.example.thesis.R;
 import com.example.thesis.Utility.Adapters.EventsRecyclerViewAdapter;
 import com.example.thesis.Utility.Adapters.Markers.ClusterManagerRenderer;
 import com.example.thesis.Utility.Adapters.Markers.ClusterMarker;
+import com.example.thesis.Utility.Adapters.NotesRecyclerViewAdapter;
 import com.example.thesis.ViewModels.FriendListViewModel;
 import com.example.thesis.ViewModels.FriendRequestsViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -160,6 +161,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         friendRequestModel = new ViewModelProvider(this).get(FriendRequestsViewModel.class);
 
         EventsRecyclerViewAdapter.setOnListOptionsClickInterface(this);
+        NotesRecyclerViewAdapter.setOnListOptionsClickInterface(this);
 
         mapFragmentStore = this;
     }
@@ -400,8 +402,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 String noteText = data.getStringExtra("text");
                 String noteDuration = data.getStringExtra("duration");
                 String noteTitle = data.getStringExtra("title");
-                note = new Note(noteTitle, noteText, noteDuration, user.getUid(),
-                        user.getDisplayName(), null);
+                note = new Note(noteTitle, noteText, noteDuration, MainActivity.userObj, null);
                 setAddInterface("Set Note");
             }
             else if(requestCode == LAUNCH_ADD_EVENT_ACTIVITY) {
@@ -611,18 +612,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 Note currNote = dataSnapshot.getValue(Note.class);
                 String key = dataSnapshot.getKey();
 
-                Log.d("Added", "CurrNote: " + currNote.getAuthorName() + " " + currNote.getNoteTitle());
-
                 DatabaseReference author = FirebaseDatabase.getInstance().getReference()
                         .child(getString(R.string.users_collection))
                         .child(user.getUid())
                         .child(getString(R.string.friends_list_collection))
-                        .child(currNote.getAuthorId());
+                        .child(currNote.getAuthor().getuId());
 
                 author.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.exists() || currNote.getAuthorId().equals(user.getUid())) {
+                        if(dataSnapshot.exists() || currNote.getAuthor().getuId().equals(user.getUid())) {
                             Log.d("Added", "Note added: " + dataSnapshot.exists() + " " + dataSnapshot.getValue(String.class));
                             setNoteMarkOnMap(currNote, key);
                         }
@@ -707,7 +706,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                     Note note = noteSnapshot.getValue(Note.class);
                     String key = noteSnapshot.getKey();
 
-                    if(note.getAuthorId().equals(noteUser.getuId())) {
+                    if(note.getAuthor().getuId().equals(noteUser.getuId())) {
                         ClusterMarker marker = new ClusterMarker("Note", note, key);
 
                         if(action == ACTION_ADD) {
@@ -718,8 +717,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                         else if(action == ACTION_DELETE) {
 
                             for(int i = 0; i < noteMarkers.size(); i++) {
-                                if(noteMarkers.get(i).getNote().getAuthorId().equals(noteUser.getuId())) {
-                                    Log.d("Note Removed", "From user: " + noteMarkers.get(i).getNote().getAuthorName());
+                                if(noteMarkers.get(i).getNote().getAuthor().getuId().equals(noteUser.getuId())) {
+                                    Log.d("Note Removed", "From user: " + noteMarkers.get(i).getNote().getAuthor().getuDisplayName());
                                     Log.d("Note Removed", "Note title: " + noteMarkers.get(i).getNote().getNoteTitle());
                                     noteMarkers.remove(i);
                                     clusterManager.removeItem(marker);
@@ -1136,8 +1135,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     @Override
-    public void clickDetails(ClusterMarker event) {
-        openDetails(event);
+    public void clickDetails(ClusterMarker object) {
+        openDetails(object);
     }
 }
 

@@ -6,19 +6,19 @@ import java.io.Serializable;
 
 public class Note implements Serializable{
 
-    private String noteTitle ,noteText, duration, authorId, authorName;
+    private String noteTitle ,noteText, duration;
     private GeoPoint geoPoint;
+    private User author;
 
     public Note() {
 
     }
 
-    public Note(String noteTitle, String noteText, String duration,String authorId, String authorName, GeoPoint geoPoint) {
+    public Note(String noteTitle, String noteText, String duration, User author, GeoPoint geoPoint) {
         this.noteTitle = noteTitle;
         this.noteText = noteText;
         this.duration = duration;
-        this.authorId = authorId;
-        this.authorName = authorName;
+        this.author = author;
         this.geoPoint = geoPoint;
     }
 
@@ -46,20 +46,12 @@ public class Note implements Serializable{
         this.duration = duration;
     }
 
-    public void setAuthorId(String authorId) {
-        this.authorId = authorId;
+    public User getAuthor() {
+        return author;
     }
 
-    public String getAuthorId() {
-        return authorId;
-    }
-
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
-    }
-
-    public String getAuthorName() {
-        return authorName;
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
     public GeoPoint getGeoPoint() {

@@ -61,7 +61,7 @@ public class NoteDetailsActivity extends AppCompatActivity {
 
         noteTitle.setText(note.getNoteTitle());
         noteText.setText(note.getNoteText());
-        noteAuthor.setText("Author: " + note.getAuthorName());
+        noteAuthor.setText("Author: " + note.getAuthor().getuDisplayName());
         if(address != null) {
             noteLocation.setText("Address: " + address);
         }

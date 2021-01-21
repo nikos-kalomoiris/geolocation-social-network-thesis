@@ -43,6 +43,10 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
+
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
@@ -141,8 +145,16 @@
 
         </activity>
 
-        <service android:name=".ForegroundServices.UserLocationUpdateService"
+        <service android:name=".Services.ForegroundServices.UserLocationUpdateService"
             android:stopWithTask="true"/>
+
+        <service
+            android:name=".Services.BackgroundServices.AppFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

@@ -35,5 +35,7 @@
     <!--Navigation Drawer Strings-->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <!--Communication channels strings-->
+    <string name="default_notification_channel_id">Notification Channel</string>
 
 </resources>

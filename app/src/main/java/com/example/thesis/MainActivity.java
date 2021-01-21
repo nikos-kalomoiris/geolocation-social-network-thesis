@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,14 +28,13 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.example.thesis.Backend.DatabaseInformationController;
-import com.example.thesis.ForegroundServices.UserLocationUpdateService;
+import com.example.thesis.Services.ForegroundServices.UserLocationUpdateService;
 import com.example.thesis.DatabaseModels.User;
 import com.example.thesis.Fragments.MapFragment;
 import com.example.thesis.Utility.Adapters.FragmentPagerAdapter.MainPagerAdapter;
@@ -57,8 +55,9 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import java.util.ArrayList;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import static com.example.thesis.Utility.Constants.ERROR_DIALOG_REQUEST;
 import static com.example.thesis.Utility.Constants.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
@@ -90,6 +89,13 @@ public class MainActivity extends AppCompatActivity implements ClickInterface, N
         super.onCreate(savedInstanceState);
         instance = this;
         setContentView(R.layout.activity_main);
+
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                Log.d("Debug", task.getResult());
+            }
+        });
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         setPagerAdapter();
