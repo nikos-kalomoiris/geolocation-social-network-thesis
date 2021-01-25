@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.thesis.CreateChatRoomActivity;
 import com.example.thesis.DatabaseModels.ChatRoom;
@@ -44,6 +45,8 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
 
     private final int LAUNCH_CREATE_CHAT_ACTIVITY = 1;
 
+    private static ViewPager2 mainPager;
+
     private RecyclerView recyclerView;
     public static ChatListRecyclerViewAdapter adapter;
     private ArrayList<ChatRoom> chatRooms = new ArrayList<>();
@@ -59,6 +62,7 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mainPager = getActivity().findViewById(R.id.mainPager); //Get mainViewPager to disable swipe in mapFragment
         createChatRoomsListener();
         setChatRoomsListener();
     }
@@ -211,8 +215,6 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
                             }
                         }
 
-
-
                         ChatRoom chatRoom = new ChatRoom(chatRoomId, chatRoomName, chatRoomUsers, "", "", "");
                         chatRooms.add(chatRoom);
                         adapter.updateChatRoomList(chatRoom);
@@ -302,7 +304,9 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
     public void onDestroy() {
         super.onDestroy();
         chatRoomsRef.removeEventListener(chatRoomsListener);
-        lastMessageRef.removeEventListener(lastMessageListener);
+        if(lastMessageListener != null) {
+            lastMessageRef.removeEventListener(lastMessageListener);
+        }
     }
 
     @Override
@@ -318,6 +322,8 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
     @Override
     public void onResume() {
         super.onResume();
+        mainPager = getActivity().findViewById(R.id.mainPager);
+        mainPager.setUserInputEnabled(true);
         Log.d("Debug", "ChatFragment - onResume");
         if(!firstTime) {
             chatRoomsRef.addChildEventListener(chatRoomsListener);

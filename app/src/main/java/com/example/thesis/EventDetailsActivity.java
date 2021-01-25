@@ -15,10 +15,14 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.thesis.DatabaseModels.Event;
 import com.example.thesis.DatabaseModels.GeoPoint;
 import com.example.thesis.DatabaseModels.Note;
+import com.example.thesis.DatabaseModels.User;
+import com.example.thesis.Utility.Adapters.Markers.ClusterMarker;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textview.MaterialTextView;
+import com.google.maps.android.clustering.ClusterItem;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,11 +43,12 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         Event event = (Event) intent.getSerializableExtra("event");
+        ArrayList<User> friendList =  (ArrayList<User>) intent.getSerializableExtra("friendList");
 
-        initWidgets(event);
+        initWidgets(event, friendList);
     }
 
-    private void initWidgets(Event event) {
+    private void initWidgets(Event event, ArrayList<User> friendList) {
         eventTitle = (MaterialTextView) findViewById(R.id.eventDetailsTitle);
         eventDesc = (MaterialTextView) findViewById(R.id.eventDescText);
         eventAuthor = (MaterialTextView) findViewById(R.id.eventOrganizerText);
@@ -75,16 +80,19 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         String participants = "";
         int index = 0;
-        for(String user: event.getParticipants()) {
-            if(index == event.getParticipants().size() - 1) {
-                participants += user;
-            }
-            else {
-                participants += user + ", ";
+        for(String userId: event.getParticipants()) {
+            for (User user: friendList) {
+                if(user.getuId().equals(userId)) {
+                    if(index == event.getParticipants().size() - 1) {
+                        participants += user.getuDisplayName();
+                    }
+                    else {
+                        participants += user.getuDisplayName() + ", ";
+                    }
+                }
             }
         }
-
-        //eventParticipants.setText(participants);
+        eventParticipants.setText(participants);
         //noteDuration.setText("Duration: " + note.getDuration());
     }
 
@@ -98,8 +106,6 @@ public class EventDetailsActivity extends AppCompatActivity {
             addresses = geocoder.getFromLocation(coordinates.getLatitude(), coordinates.getLongitude(), 1);
 
             String address = addresses.get(0).getAddressLine(0);
-//            String city = addresses.get(0).getLocality();
-//            String postalCode = addresses.get(0).getPostalCode();
 
             return address;
         }

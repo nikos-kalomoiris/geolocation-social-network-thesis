@@ -33,6 +33,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.thesis.AddEventActivity;
 import com.example.thesis.AddNoteActivity;
 import com.example.thesis.Backend.DatabaseInformationController;
+import com.example.thesis.DatabaseModels.ChatRoom;
 import com.example.thesis.DatabaseModels.Event;
 import com.example.thesis.DatabaseModels.Note;
 import com.example.thesis.DatabaseModels.User;
@@ -83,6 +84,8 @@ import com.google.maps.model.DirectionsRoute;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback,
@@ -130,10 +133,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     private FriendRequestsViewModel friendRequestModel;
     private Handler mHandler = new Handler();
     private Runnable mRunnable;
-    private ViewPager2 mainPager;
+    private static ViewPager2 mainPager;
     private boolean fabIsOpen = false;
     private Note note;
     private Event event;
+    HashMap<String, Object> chatRoom = null;
     private GeoApiContext geoApiContext = null;
 
     private MaterialButton fabAdd, fabNote, fabEvent, addNoteEventBtn, cancelNoteEventBtn, fabCancelDirections;
@@ -217,14 +221,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             map.setOnPolylineClickListener(this);
 
             setClusterManagers();
-        }
-        catch (NullPointerException ex) {
+        } catch (NullPointerException ex) {
             Log.e("Error", ex.getMessage());
         }
-
-    }
-
-    private void setUpDbListeners() {
 
     }
 
@@ -297,6 +296,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                             GeoPoint geoPoint = new GeoPoint(mapCenter.latitude, mapCenter.longitude);
                             event.setGeoPoint(geoPoint);
                             dbController.saveEvent(event);
+                        }
+                        if(chatRoom != null) {
+                            DatabaseReference chatRoomsRef = FirebaseDatabase.getInstance().getReference()
+                                    .child(getString(R.string.chat_rooms_collection));
+                            chatRoomsRef.push().setValue(chatRoom);
+                            chatRoom = null;
                         }
                     }
                     else {
@@ -409,11 +414,33 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 String eventTitle = data.getStringExtra("title");
                 String eventDesc = data.getStringExtra("desc");
                 String eventDate = data.getStringExtra("date");
+                boolean hasChat = data.getBooleanExtra("hasChat", false);
                 ArrayList<String> participantsId = data.getStringArrayListExtra("participants");
+                if(hasChat) {
+                    saveChatRoom(participantsId, eventTitle);
+                }
                 event = new Event(eventTitle, eventDesc, MainActivity.userObj, eventDate, participantsId, null);
                 setAddInterface("Set Event");
             }
         }
+    }
+
+    private void saveChatRoom(ArrayList<String> participantsId, String chatRoomTitle) {
+
+        ArrayList<User> chatRoomUsers = new ArrayList<>();
+        for(ClusterMarker user: clusterMarkers) {
+            for(String pId: participantsId) {
+                if(user.getUser().getuId().equals(pId)) {
+                    chatRoomUsers.add(user.getUser());
+                }
+            }
+        }
+
+        //chatRoomUsers.add(MainActivity.userObj);
+        chatRoom = new HashMap<>();
+        chatRoom.put("users", chatRoomUsers);
+        chatRoom.put("chatRoomName", chatRoomTitle);
+        chatRoom.put(getString(R.string.messages_collection), "");
     }
 
     private void setAddInterface(String action) {
@@ -1016,6 +1043,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             Bundle bundle = new Bundle();
             bundle.putSerializable("event", item.getEvent());
+            ArrayList<User> friends = new ArrayList<>();
+            for(ClusterMarker marker: clusterMarkers) {
+                friends.add(marker.getUser());
+            }
+            bundle.putSerializable("friendList", friends);
             intent.putExtras(bundle);
             startActivity(intent);
         }
@@ -1107,6 +1139,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         super.onResume();
         Log.d("Debug", "onResume - MapFragment");
         updateFriendsLocationRunnable();
+        mainPager = getActivity().findViewById(R.id.mainPager);
         mainPager.setUserInputEnabled(false);
     }
 

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -42,6 +43,7 @@ public class AddEventDetailsFragment extends Fragment {
     private TextView charsLimitTitle, charsLimitDesc, participantsText;
     private EditText titleInput, descInput, dateInput;
     private MaterialButton addParticipants, addEvent;
+    private CheckBox createChat;
 
     private ArrayList<User> participants = new ArrayList<>();
 
@@ -68,10 +70,12 @@ public class AddEventDetailsFragment extends Fragment {
         descInput = (EditText) v.findViewById(R.id.addEventDesc);
         dateInput = (EditText) v.findViewById(R.id.enterDate);
 
+        //CheckBox
+        createChat = (CheckBox) v.findViewById(R.id.createChatCheck);
+
         //MatButton Views
         addParticipants = (MaterialButton) v.findViewById(R.id.addParticipantsBtn);
         addEvent = (MaterialButton) v.findViewById(R.id.addEventBtn);
-
 
         DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
 
@@ -124,6 +128,7 @@ public class AddEventDetailsFragment extends Fragment {
                     returnIntent.putExtra("date", dateInput.getText().toString());
                     returnIntent.putExtra("desc", descInput.getText().toString());
                     returnIntent.putExtra("title", titleInput.getText().toString());
+                    returnIntent.putExtra("hasChat", createChat.isChecked());
                     returnIntent.putStringArrayListExtra("participants", participantsId);
 
                     getActivity().setResult(AddEventActivity.RESULT_OK, returnIntent);

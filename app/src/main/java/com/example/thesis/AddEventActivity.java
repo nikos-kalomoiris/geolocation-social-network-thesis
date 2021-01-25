@@ -1,12 +1,7 @@
 package com.example.thesis;
 
-import android.app.DatePickerDialog;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,22 +11,9 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.thesis.Fragments.AddEventDetailsFragment;
 import com.example.thesis.Fragments.AddParticipantsFragment;
-import com.google.android.material.button.MaterialButton;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
 
 public class AddEventActivity extends AppCompatActivity {
-
-//    final Calendar calendar = Calendar.getInstance();
-//
-//    private final int MAX_CHARS = 144;
-//    private final int TITLE_MAX_CHARS = 35;
-//
-//    private TextView charsLimitTitle, charsLimitDesc, participantsText;
-//    private EditText titleInput, descInput, dateInput;
-//    private MaterialButton addParticipants, addEvent;
 
     private static FragmentManager fragmentManager;
 

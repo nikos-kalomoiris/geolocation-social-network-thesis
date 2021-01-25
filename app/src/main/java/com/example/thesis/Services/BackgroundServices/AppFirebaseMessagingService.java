@@ -1,5 +1,6 @@
 package com.example.thesis.Services.BackgroundServices;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -15,31 +16,36 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.thesis.MainActivity;
 import com.example.thesis.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class AppFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "FirebaseMessagingServce";
+    public static boolean hasMessage = false;
+    public static String charRoomId;
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         String notificationTitle = null, notificationBody = null;
-
+        hasMessage = true;
         // Check if message contains a notification payload
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
             notificationTitle = remoteMessage.getNotification().getTitle();
             notificationBody = remoteMessage.getNotification().getBody();
         }
-
-        // If you want to fire a local notification (that notification on the top of the phone screen)
-        // you should fire it from here
+        for(String chatId: remoteMessage.getData().values()) {
+            charRoomId = chatId;
+        }
+        Log.d("Debug", charRoomId);
+        //fire a local notification
         sendLocalNotification(notificationTitle, notificationBody);
-    }
-
-    @Override
-    public void onNewToken(@NonNull String s) {
-        super.onNewToken(s);
     }
 
     private void sendLocalNotification(String notificationTitle, String notificationBody) {
@@ -60,6 +66,7 @@ public class AppFirebaseMessagingService extends FirebaseMessagingService {
                     .setAutoCancel(true)   //Automatically delete the notification
                     .setSmallIcon(R.drawable.ic_chat) //Notification icon
                     .setContentIntent(pendingIntent)
+                    .setPriority(NotificationManager.IMPORTANCE_HIGH)
                     .setContentTitle(notificationTitle)
                     .setContentText(notificationBody)
                     .setSound(defaultSoundUri);

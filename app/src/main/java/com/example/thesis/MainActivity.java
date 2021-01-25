@@ -79,6 +79,8 @@ public class MainActivity extends AppCompatActivity implements ClickInterface, N
     public static MainActivity instance;
     private Location location;
 
+    private String fcmToken;
+
     //UI Elements
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -89,14 +91,7 @@ public class MainActivity extends AppCompatActivity implements ClickInterface, N
         super.onCreate(savedInstanceState);
         instance = this;
         setContentView(R.layout.activity_main);
-
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-            @Override
-            public void onComplete(@NonNull Task<String> task) {
-                Log.d("Debug", task.getResult());
-            }
-        });
-
+        getFcmToken();
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         setPagerAdapter();
         mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
@@ -112,6 +107,15 @@ public class MainActivity extends AppCompatActivity implements ClickInterface, N
         currInstance = AuthUI.getInstance();
         startLocationService();
         setDrawerNavigation();
+    }
+
+    private void getFcmToken() {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                fcmToken = task.getResult();
+            }
+        });
     }
 
     private void setDrawerNavigation() {
@@ -344,8 +348,14 @@ public class MainActivity extends AppCompatActivity implements ClickInterface, N
     }
 
     private void saveCurrentUser() {
-        userObj = new User(user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString(), user.getUid());
-        dbController.saveUserInformation(userObj);
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                fcmToken = task.getResult();
+                userObj = new User(user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString(), user.getUid(), fcmToken);
+                dbController.saveUserInformation(userObj);
+            }
+        });
     }
 
     public boolean isServicesOK(){

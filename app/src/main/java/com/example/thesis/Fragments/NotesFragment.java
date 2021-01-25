@@ -32,7 +32,7 @@ import java.util.ArrayList;
 
 public class NotesFragment extends Fragment {
 
-    private ViewPager2 mainPager;
+    private static ViewPager2 mainPager;
     private RecyclerView recyclerView;
     private NotesRecyclerViewAdapter adapter;
     private ArrayList<ClusterMarker> notesList = new ArrayList<>();
@@ -71,6 +71,7 @@ public class NotesFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d("Debug", "ProfileFragment - onResume");
+        mainPager = getActivity().findViewById(R.id.mainPager);
         mainPager.setUserInputEnabled(true);
         if(!firstTime) {
             notesRef.addChildEventListener(notesListener);

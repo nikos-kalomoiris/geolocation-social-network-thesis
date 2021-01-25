@@ -6,22 +6,23 @@ import java.io.Serializable;
 import java.util.List;
 
 public class User implements Serializable, Comparable<User> {
+
     private String uDisplayName;
     private String uEmail;
     private String uIconUrl;
     private String uId;
-    //private ArrayList<UserLocation> uFriendRequests;
-    //private ArrayList<UserLocation> uFriendList;
+    private String uToken;
 
     public User() {
 
     }
 
-    public User(String uDisplayName, String uEmail, String uIconUrl, String uId) {
+    public User(String uDisplayName, String uEmail, String uIconUrl, String uId, String uToken) {
         this.uDisplayName = uDisplayName;
         this.uEmail = uEmail;
         this.uIconUrl = uIconUrl;
         this.uId = uId;
+        this.uToken = uToken;
     }
 
     public String getuId() {
@@ -56,8 +57,12 @@ public class User implements Serializable, Comparable<User> {
         this.uIconUrl = uIconUrl;
     }
 
-    public void setuFriendList(List<String> friendList) {
+    public String getuToken() {
+        return uToken;
+    }
 
+    public void setuToken(String uToken) {
+        this.uToken = uToken;
     }
 
     @NonNull

@@ -33,7 +33,7 @@ import java.util.ArrayList;
 
 public class EventsFragment extends Fragment {
 
-    private ViewPager2 mainPager;
+    private static ViewPager2 mainPager;
     private RecyclerView recyclerView;
     private EventsRecyclerViewAdapter adapter;
     private ArrayList<ClusterMarker> eventsList = new ArrayList<>();
@@ -72,6 +72,7 @@ public class EventsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d("Debug", "ProfileFragment - onResume");
+        mainPager = getActivity().findViewById(R.id.mainPager);
         mainPager.setUserInputEnabled(true);
         if(!firstTime) {
             eventsRef.addChildEventListener(eventsListener);

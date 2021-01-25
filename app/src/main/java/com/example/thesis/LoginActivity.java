@@ -21,6 +21,7 @@ import com.example.thesis.DatabaseModels.User;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 import java.util.Arrays;
@@ -48,6 +49,15 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
         currInstance = AuthUI.getInstance();
         getLocationPermission();
+
+        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+            if(locationPermissionGranted) {
+                signInOptions();
+            }
+            else {
+                Toast.makeText(getContext(), "Please give location permission.", Toast.LENGTH_SHORT).show();
+            }
+        }
 
         login = findViewById(R.id.googleLoginButton);
         login.setOnClickListener(new View.OnClickListener() {

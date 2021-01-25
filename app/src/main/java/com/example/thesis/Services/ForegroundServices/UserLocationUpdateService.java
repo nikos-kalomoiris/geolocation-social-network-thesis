@@ -16,6 +16,7 @@ import android.os.Looper;
 import android.util.Log;
 
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -29,11 +30,14 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.example.thesis.DatabaseModels.GeoPoint;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 
 public class UserLocationUpdateService extends Service {
@@ -43,6 +47,7 @@ public class UserLocationUpdateService extends Service {
     private FusedLocationProviderClient mFusedLocationClient;
     private final static long UPDATE_INTERVAL = 4000;
     private final static long FASTEST_INTERVAL = 2000;
+    private String fcmToken;
 
     @Nullable
     @Override
@@ -55,7 +60,8 @@ public class UserLocationUpdateService extends Service {
         super.onCreate();
         dbController = new DatabaseInformationController();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
+        getFcmToken();
+        Log.d("Debug", "FCM token from service: " + fcmToken);
         if (Build.VERSION.SDK_INT >= 26) {
             String CHANNEL_ID = "channel_1";
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
@@ -72,6 +78,15 @@ public class UserLocationUpdateService extends Service {
 
             startForeground(1, notification);
         }
+    }
+
+    private void getFcmToken() {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                fcmToken = task.getResult();
+            }
+        });
     }
 
     @Override
@@ -106,7 +121,7 @@ public class UserLocationUpdateService extends Service {
                             FirebaseUser currUser = FirebaseAuth.getInstance().getCurrentUser();
                             UserLocation userLocation = null;
                             if(currUser != null) {
-                                User user = new User(currUser.getDisplayName(), currUser.getEmail(), currUser.getPhotoUrl().toString(), currUser.getUid());
+                                User user = new User(currUser.getDisplayName(), currUser.getEmail(), currUser.getPhotoUrl().toString(), currUser.getUid(), fcmToken);
                                 GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
                                 userLocation = new UserLocation(geoPoint, null, user);
                             }

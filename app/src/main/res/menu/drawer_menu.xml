@@ -6,9 +6,6 @@
             android:title="Friends"
             android:icon="@drawable/ic_friend_list"/>
         <item
-            android:id="@+id/permissionsDrawerBtn"
-            android:title="Permissions"/>
-        <item
             android:id="@+id/logOutDrawerBtn"
             android:title="Logout"
             android:icon="@drawable/ic_logout"/>
