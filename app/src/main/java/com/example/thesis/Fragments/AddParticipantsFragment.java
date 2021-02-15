@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.thesis.AddEventActivity;
 import com.example.thesis.DatabaseModels.User;
+import com.example.thesis.MainActivity;
 import com.example.thesis.R;
 import com.example.thesis.Utility.Adapters.ParticipantsRecyclerViewAdapter;
 import com.example.thesis.Utility.Adapters.Markers.ClusterMarker;

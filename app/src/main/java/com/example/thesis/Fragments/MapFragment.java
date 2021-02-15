@@ -17,6 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -81,6 +83,7 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
+import com.google.maps.model.TravelMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -137,8 +140,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     private boolean fabIsOpen = false;
     private Note note;
     private Event event;
-    HashMap<String, Object> chatRoom = null;
+    private HashMap<String, Object> chatRoom = new HashMap<>();
     private GeoApiContext geoApiContext = null;
+    private TravelMode travelMode;
 
     private MaterialButton fabAdd, fabNote, fabEvent, addNoteEventBtn, cancelNoteEventBtn, fabCancelDirections;
     private Animation fabOpen, fabClose, fabRotateClock, getFabRotateCounterClock;
@@ -301,7 +305,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                             DatabaseReference chatRoomsRef = FirebaseDatabase.getInstance().getReference()
                                     .child(getString(R.string.chat_rooms_collection));
                             chatRoomsRef.push().setValue(chatRoom);
-                            chatRoom = null;
+                            chatRoom = new HashMap<>();
                         }
                     }
                     else {
@@ -432,6 +436,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             for(String pId: participantsId) {
                 if(user.getUser().getuId().equals(pId)) {
                     chatRoomUsers.add(user.getUser());
+                    Log.d("Debug", user.getUser().getuDisplayName());
                 }
             }
         }
@@ -785,10 +790,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
                 for(String participantId: currEvent.getParticipants()) {
 
-                     if(currEvent.getAuthor().getuId().equals(user.getUid())) {
-                         setEventMarkOnMap(currEvent, key);
-                         break;
-                     }
+//                     if(currEvent.getAuthor().getuId().equals(user.getUid())) {
+//                         setEventMarkOnMap(currEvent, key);
+//                         break;
+//                     }
 
                     if(participantId.equals(user.getUid())) {
                         setEventMarkOnMap(currEvent, key);
@@ -892,7 +897,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void calculateDirections(ClusterMarker marker) {
-        Log.d(DIRECTION_TAG, "calculateDirections: calculating directions.");
 
         if(polylines.size() > 0) {
             for (PolylineData singlePolyline: polylines) {
@@ -908,13 +912,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 marker.getPosition().longitude
         );
         DirectionsApiRequest directions = new DirectionsApiRequest(geoApiContext);
-
+        Log.d(DIRECTION_TAG, "calculateDirections: calculating directions.");
         mFusedLocationProviderClient.getLastLocation()
                 .addOnSuccessListener(new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
 
                         directions.alternatives(true);
+                        directions.mode(travelMode);
                         directions.origin(
                                 new com.google.maps.model.LatLng(
                                         location.getLatitude(),
@@ -945,6 +950,40 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     }
 
+    private void createTravelModeDialog(ClusterMarker item) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Select transport type");
+
+        // setting the custom layout
+        final View customLayout = getLayoutInflater().inflate(R.layout.travel_mode_dialog, null);
+        builder.setView(customLayout);
+
+        ImageButton walkBtn = (ImageButton) customLayout.findViewById(R.id.walk);
+        ImageButton driveBtn = (ImageButton) customLayout.findViewById(R.id.drive);
+
+        AlertDialog dialog = builder.create();
+
+        walkBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                travelMode = TravelMode.WALKING;
+                setDirectionsUI(item);
+                dialog.dismiss();
+            }
+        });
+
+        driveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                travelMode = TravelMode.DRIVING;
+                setDirectionsUI(item);
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
     private void createMarkerDialog(final ClusterMarker item) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Choose action.")
@@ -963,19 +1002,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 .setNeutralButton("Set Direction", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        setSelectedMarkerVisibility(item, false);
-                        fabAdd.setVisibility(View.GONE);
-                        fabEvent.setAnimation(fabClose);
-                        fabNote.setAnimation(fabClose);
-                        fabCancelDirections.setVisibility(View.VISIBLE);
-                        fabCancelDirections.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorAccent));
-                        fabCancelDirections.setAnimation(getFabRotateCounterClock);
-                        calculateDirections(item);
-                        selectedMarker = item;
+                        createTravelModeDialog(item);
                     }
                 });
         final AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    private void setDirectionsUI(ClusterMarker item) {
+        setSelectedMarkerVisibility(item, false);
+        fabAdd.setVisibility(View.GONE);
+        fabEvent.setAnimation(fabClose);
+        fabNote.setAnimation(fabClose);
+        fabCancelDirections.setVisibility(View.VISIBLE);
+        fabCancelDirections.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorAccent));
+        fabCancelDirections.setAnimation(getFabRotateCounterClock);
+        calculateDirections(item);
+        selectedMarker = item;
     }
 
     private void setSelectedMarkerVisibility(ClusterMarker item, Boolean isVisible) {
@@ -1074,7 +1117,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                     public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                         String latitude = String.valueOf(item.getPosition().latitude);
                         String longitude = String.valueOf(item.getPosition().longitude);
-                        Uri gmmIntentUri = Uri.parse("google.navigation:q=" + latitude + "," + longitude);
+                        Uri gmmIntentUri;
+
+                        if(travelMode == TravelMode.WALKING) {
+                            gmmIntentUri = Uri.parse("google.navigation:q=" + latitude + "," + longitude + "&mode=w");
+                        }
+                        else {
+                            gmmIntentUri = Uri.parse("google.navigation:q=" + latitude + "," + longitude);
+                        }
+
                         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                         mapIntent.setPackage("com.google.android.apps.maps");
 
@@ -1101,13 +1152,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onPolylineClick(Polyline polyline) {
 
+        int color;
+        if(travelMode == TravelMode.DRIVING) {
+            color = R.color.colorPolylineHighlighted;
+        }
+        else {
+            color = R.color.colorAccent;
+        }
+
         int index = 1;
         Log.d("Clicked", "Clicked polyline with id: " + polyline.getId());
         //Log.d("Clicked", "Is clicking");
         for (PolylineData singlePolyline: polylines) {
             if(polyline.getId().equals(singlePolyline.getPolyline().getId())) {
                 Log.d("Clicked", "Checking polyline with id: " + singlePolyline.getPolyline().getId());
-                singlePolyline.getPolyline().setColor(ContextCompat.getColor(getActivity(), R.color.colorPolylineHighlighted));
+                singlePolyline.getPolyline().setColor(ContextCompat.getColor(getActivity(), color));
                 singlePolyline.getPolyline().setZIndex(1);
 
                 if(tripMarkers.size() > 0) {

@@ -177,7 +177,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/read_more/baseline_read_more_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/directions_car/baseline_directions_car_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -187,7 +187,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_read_details" />
+                            <entry key="outputName" value="ic_car" />
                             <entry key="sourceFile" value="C:\Users\nikos\Desktop\search.svg" />
                           </map>
                         </option>

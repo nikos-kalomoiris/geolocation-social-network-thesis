@@ -123,6 +123,7 @@ public class AddEventDetailsFragment extends Fragment {
                     for (User part: participants) {
                         participantsId.add(part.getuId());
                     }
+                    participantsId.add(MainActivity.userObj.getuId());
 
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("date", dateInput.getText().toString());
@@ -166,6 +167,10 @@ public class AddEventDetailsFragment extends Fragment {
                 }
 
             }
+            if(participants.size() > 0) {
+                participantsText.setText(participantsText.getText()  + MainActivity.userObj.getuDisplayName());
+            }
+
 
         }
     }
