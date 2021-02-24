@@ -583,7 +583,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
                             clusterMarkers.add(userMarker);
                             clusterManager.addItem(userMarker);
-                            //refreshNoteList(userLocation.getUser(), ACTION_ADD);
+                            refreshNoteList(userLocation.getUser(), ACTION_ADD);
                             clusterManager.cluster();
                             friendListModel.setMarkers(clusterMarkers);
 
@@ -742,9 +742,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                         ClusterMarker marker = new ClusterMarker("Note", note, key);
 
                         if(action == ACTION_ADD) {
-                            noteMarkers.add(marker);
-                            clusterManager.addItem(marker);
-                            //noteClusterManager.addItem(marker);
+                            removeNoteMarkFromMap(key);
+                            setNoteMarkOnMap(note, key);
                         }
                         else if(action == ACTION_DELETE) {
 
@@ -752,8 +751,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                 if(noteMarkers.get(i).getNote().getAuthor().getuId().equals(noteUser.getuId())) {
                                     Log.d("Note Removed", "From user: " + noteMarkers.get(i).getNote().getAuthor().getuDisplayName());
                                     Log.d("Note Removed", "Note title: " + noteMarkers.get(i).getNote().getNoteTitle());
-                                    noteMarkers.remove(i);
-                                    clusterManager.removeItem(marker);
+//                                    noteMarkers.remove(i);
+//                                    clusterManager.removeItem(marker);
+                                    removeEventMarkOnMap(key);
                                     break;
                                 }
                             }
@@ -958,6 +958,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         final View customLayout = getLayoutInflater().inflate(R.layout.travel_mode_dialog, null);
         builder.setView(customLayout);
 
+        //Initializing UI Components
         ImageButton walkBtn = (ImageButton) customLayout.findViewById(R.id.walk);
         ImageButton driveBtn = (ImageButton) customLayout.findViewById(R.id.drive);
 

@@ -68,7 +68,13 @@ public class NoteDetailsActivity extends AppCompatActivity {
         else {
             noteLocation.setText("Address: Not Found");
         }
-        noteDuration.setText("Duration: " + note.getDuration());
+
+        switch (note.getDuration()) {
+            case "min": noteDuration.setText("Duration: 30 min"); break;
+            case "med": noteDuration.setText("Duration: 1 hour"); break;
+            case "max": noteDuration.setText("Duration: 3 hours"); break;
+        }
+
     }
 
     private String convertToAddress(GeoPoint coordinates) {
@@ -81,8 +87,6 @@ public class NoteDetailsActivity extends AppCompatActivity {
             addresses = geocoder.getFromLocation(coordinates.getLatitude(), coordinates.getLongitude(), 1);
 
             String address = addresses.get(0).getAddressLine(0);
-//            String city = addresses.get(0).getLocality();
-//            String postalCode = addresses.get(0).getPostalCode();
 
             return address;
         }

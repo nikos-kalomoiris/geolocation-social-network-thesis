@@ -3,6 +3,7 @@ package com.example.thesis.Fragments;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -69,6 +70,10 @@ public class AddEventDetailsFragment extends Fragment {
         titleInput = (EditText) v.findViewById(R.id.addEventTitle);
         descInput = (EditText) v.findViewById(R.id.addEventDesc);
         dateInput = (EditText) v.findViewById(R.id.enterDate);
+
+        descInput.setInputType(InputType.TYPE_CLASS_TEXT |
+                InputType.TYPE_TEXT_FLAG_MULTI_LINE |
+                InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 
         //CheckBox
         createChat = (CheckBox) v.findViewById(R.id.createChatCheck);

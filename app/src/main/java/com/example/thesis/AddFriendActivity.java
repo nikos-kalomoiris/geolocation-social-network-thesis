@@ -3,6 +3,7 @@ package com.example.thesis;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Debug;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -24,6 +25,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class AddFriendActivity extends AppCompatActivity {
 
@@ -66,16 +69,45 @@ public class AddFriendActivity extends AppCompatActivity {
     }
 
     private void findFriendToAdd(String email) {
+        ArrayList<String> friendsIds = new ArrayList<>();
+
+        DatabaseReference friendList = FirebaseDatabase.getInstance().getReference()
+                .child(getString(R.string.users_collection))
+                .child(FirebaseAuth.getInstance().getUid())
+                .child(getString(R.string.friends_list_collection));
+
         DatabaseReference usersList = FirebaseDatabase.getInstance().getReference()
                 .child(getString(R.string.users_collection));
+
+        friendList.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot fIdSnap: dataSnapshot.getChildren()) {
+                    String fId = fIdSnap.getValue(String.class);
+                    friendsIds.add(fId);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("Error", databaseError.getMessage());
+            }
+        });
 
         usersList.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 boolean userFound = false;
+                boolean userAlreadyExist = false;
                 for(DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
                     User user = userSnapshot.getValue(User.class);
-                    if(user.getuEmail().equals(email)) {
+                    for(String id: friendsIds) {
+                        if(user.getuId().equals(id) || user.getuId().equals(FirebaseAuth.getInstance().getUid())) {
+                            userAlreadyExist = true;
+                            break;
+                        }
+                    }
+                    if(user.getuEmail().equals(email) && !userAlreadyExist) {
                         try {
                             userFound = true;
                             usersList.child(user.getuId())
@@ -94,10 +126,12 @@ public class AddFriendActivity extends AppCompatActivity {
                     returnIntent.putExtra("result", "Request sent successfully!");
                     setResult(AddFriendActivity.RESULT_OK, returnIntent);
                     finish();
-                    //makeToast("Request sent successfully!");
+                }
+                else if(userAlreadyExist) {
+                    makeToast("User already in friend list.");
                 }
                 else {
-                    makeToast("User not found");
+                    makeToast("User not found.");
                 }
             }
 

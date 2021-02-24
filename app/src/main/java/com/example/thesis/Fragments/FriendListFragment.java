@@ -106,7 +106,7 @@ public class FriendListFragment extends Fragment {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                //TODO: pending
+                //Not used
             }
 
             @Override
@@ -124,7 +124,7 @@ public class FriendListFragment extends Fragment {
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                //TODO: pending
+                //Not used
             }
 
             @Override
