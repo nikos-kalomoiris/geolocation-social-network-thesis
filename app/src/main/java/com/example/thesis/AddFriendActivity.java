@@ -81,11 +81,75 @@ public class AddFriendActivity extends AppCompatActivity {
 
         friendList.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot fIdSnap: dataSnapshot.getChildren()) {
+            public void onDataChange(@NonNull DataSnapshot dbSnap) {
+                friendsIds.clear();
+
+                for(DataSnapshot fIdSnap: dbSnap.getChildren()) {
                     String fId = fIdSnap.getValue(String.class);
                     friendsIds.add(fId);
                 }
+
+                for (String id: friendsIds) {
+                    Log.d("Debug", id);
+                }
+
+                usersList.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        boolean userFound = false;
+                        boolean userAlreadyExist = false;
+                        boolean userIsYou = false;
+                        for(DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
+                            User user = userSnapshot.getValue(User.class);
+                            if(user.getuEmail().equals(email)) {
+                                for(String id: friendsIds) {
+                                    if(user.getuId().equals(id)) {
+                                        userAlreadyExist = true;
+                                        break;
+                                    }
+                                }
+                                Log.d("Debug", "User Already Exist: " + userAlreadyExist);
+                                Log.d("Debug", "User is: " + user.getuId() + " | " + user.getuDisplayName());
+                                if(!user.getuId().equals(FirebaseAuth.getInstance().getUid()) && !userAlreadyExist) {
+                                    try {
+                                        userFound = true;
+                                        usersList.child(user.getuId())
+                                                .child(getString(R.string.requests_list_collection))
+                                                .child(FirebaseAuth.getInstance().getUid())
+                                                .setValue(FirebaseAuth.getInstance().getUid());
+                                        break;
+                                    }
+                                    catch (NullPointerException ex) {
+                                        Log.d("Error", ex.getMessage());
+                                    }
+                                }
+                                else {
+                                    userIsYou = true;
+                                }
+                            }
+                        }
+                        if(userFound) {
+                            Intent returnIntent = new Intent();
+                            returnIntent.putExtra("result", "Request sent successfully!");
+                            setResult(AddFriendActivity.RESULT_OK, returnIntent);
+                            finish();
+                        }
+                        else if(userAlreadyExist) {
+                            makeToast("User already in friend list.");
+                        }
+                        else if(userIsYou) {
+                            makeToast("This is your email.");
+                        }
+                        else {
+                            makeToast("User not found.");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.e("Error", databaseError.getMessage());
+                    }
+                });
             }
 
             @Override
@@ -94,52 +158,6 @@ public class AddFriendActivity extends AppCompatActivity {
             }
         });
 
-        usersList.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                boolean userFound = false;
-                boolean userAlreadyExist = false;
-                for(DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
-                    User user = userSnapshot.getValue(User.class);
-                    for(String id: friendsIds) {
-                        if(user.getuId().equals(id) || user.getuId().equals(FirebaseAuth.getInstance().getUid())) {
-                            userAlreadyExist = true;
-                            break;
-                        }
-                    }
-                    if(user.getuEmail().equals(email) && !userAlreadyExist) {
-                        try {
-                            userFound = true;
-                            usersList.child(user.getuId())
-                                    .child(getString(R.string.requests_list_collection))
-                                    .child(FirebaseAuth.getInstance().getUid())
-                                    .setValue(FirebaseAuth.getInstance().getUid());
-                        }
-                        catch (NullPointerException ex) {
-                            Log.d("Error", ex.getMessage());
-                        }
-
-                    }
-                }
-                if(userFound) {
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("result", "Request sent successfully!");
-                    setResult(AddFriendActivity.RESULT_OK, returnIntent);
-                    finish();
-                }
-                else if(userAlreadyExist) {
-                    makeToast("User already in friend list.");
-                }
-                else {
-                    makeToast("User not found.");
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("Error", databaseError.getMessage());
-            }
-        });
     }
 
     private void makeToast(String message) {

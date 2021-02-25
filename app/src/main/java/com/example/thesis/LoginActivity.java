@@ -81,7 +81,6 @@ public class LoginActivity extends Activity {
                         .createSignInIntentBuilder()
                         .setAvailableProviders(Arrays.asList(
                                 new AuthUI.IdpConfig.GoogleBuilder().build()))
-                                //new AuthUI.IdpConfig.EmailBuilder().build()))
                         .setIsSmartLockEnabled(false)
                         .build(),
                 RC_SIGN_IN);
@@ -133,9 +132,6 @@ public class LoginActivity extends Activity {
             case PERMISSIONS_REQUEST_ENABLE_GPS: {
                 if (!locationPermissionGranted) {
                     getLocationPermission();
-                }
-                else {
-
                 }
             }
         }

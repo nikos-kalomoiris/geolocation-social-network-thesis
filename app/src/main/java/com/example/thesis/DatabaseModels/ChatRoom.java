@@ -6,16 +6,17 @@ import java.util.ArrayList;
 public class ChatRoom implements Serializable {
 
     private ArrayList<User> chatRoomUsers = new ArrayList<>();
-    private String chatRoomId, chatRoomName, lastMessage, lastUserMessageId, lastMessageUserName;
+    private String chatRoomId, chatRoomName, lastMessage, lastUserMessageId, lastMessageUserName, type;
 
     public ChatRoom(String chatRoomId, String chatRoomName, ArrayList<User> chatRoomUsers, String lastMessage, String lastUserMessageId,
-                    String lastMessageUserName) {
+                    String lastMessageUserName, String type) {
         this.chatRoomId = chatRoomId;
         this.chatRoomName = chatRoomName;
         this.chatRoomUsers.addAll(chatRoomUsers);
         this.lastMessage = lastMessage;
         this.lastUserMessageId = lastUserMessageId;
         this.lastMessageUserName = lastMessageUserName;
+        this.type = type;
     }
 
     public String getChatRoomId() {
@@ -64,5 +65,13 @@ public class ChatRoom implements Serializable {
 
     public void setLastMessageUserName(String lastMessageUserName) {
         this.lastMessageUserName = lastMessageUserName;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

@@ -26,25 +26,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AppFirebaseMessagingService extends FirebaseMessagingService {
-    private static final String TAG = "FirebaseMessagingServce";
-    public static boolean hasMessage = false;
+    private static final String TAG = "FCMService";
     public static String charRoomId;
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         String notificationTitle = null, notificationBody = null;
-        hasMessage = true;
-        // Check if message contains a notification payload
+
         if (remoteMessage.getNotification() != null) {
-            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
             notificationTitle = remoteMessage.getNotification().getTitle();
             notificationBody = remoteMessage.getNotification().getBody();
         }
         for(String chatId: remoteMessage.getData().values()) {
             charRoomId = chatId;
         }
-        Log.d("Debug", charRoomId);
-        //fire a local notification
+
         sendLocalNotification(notificationTitle, notificationBody);
     }
 
@@ -63,8 +59,8 @@ public class AppFirebaseMessagingService extends FirebaseMessagingService {
                     NotificationManager.IMPORTANCE_HIGH);
 
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, getString(R.string.default_notification_channel_id))
-                    .setAutoCancel(true)   //Automatically delete the notification
-                    .setSmallIcon(R.drawable.ic_chat) //Notification icon
+                    .setAutoCancel(true)
+                    .setSmallIcon(R.drawable.ic_chat)
                     .setContentIntent(pendingIntent)
                     .setPriority(NotificationManager.IMPORTANCE_HIGH)
                     .setContentTitle(notificationTitle)

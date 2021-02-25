@@ -42,20 +42,28 @@ public class ChatListRecyclerViewAdapter extends RecyclerView.Adapter<ChatListRe
     @Override
     public void onBindViewHolder(@NonNull ChatListRecyclerViewAdapter.ViewHolder holder, int position) {
 
-        if(chatRoomList.get(position).getChatRoomUsers().size() > 2) {
+        if(chatRoomList.get(position).getType().equals("Event")) {
             Glide.with(context)
-                    .load(R.drawable.ic_friend_list)
+                    .load(R.drawable.ic_event_chat)
                     .into(holder.chatRoomImage);
         }
         else {
-            for(User user: chatRoomList.get(position).getChatRoomUsers()) {
-                if(!user.getuId().equals(FirebaseAuth.getInstance().getUid())) {
-                    Glide.with(context)
-                            .load(user.getuIconUrl())
-                            .into(holder.chatRoomImage);
+            if(chatRoomList.get(position).getChatRoomUsers().size() > 2) {
+                Glide.with(context)
+                        .load(R.drawable.ic_friend_list)
+                        .into(holder.chatRoomImage);
+            }
+            else {
+                for(User user: chatRoomList.get(position).getChatRoomUsers()) {
+                    if(!user.getuId().equals(FirebaseAuth.getInstance().getUid())) {
+                        Glide.with(context)
+                                .load(user.getuIconUrl())
+                                .into(holder.chatRoomImage);
+                    }
                 }
             }
         }
+
         holder.chatRoomName.setText(chatRoomList.get(position).getChatRoomName());
         if(chatRoomList.get(position).getLastUserMessageId().equals(FirebaseAuth.getInstance().getUid())) {
             holder.lastMessage.setText("Me: " + chatRoomList.get(position).getLastMessage());

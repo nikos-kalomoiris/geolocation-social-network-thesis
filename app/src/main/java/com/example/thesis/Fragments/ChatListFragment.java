@@ -147,6 +147,7 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
                                 chatRoom.put("users", chatRoomUsers);
                                 chatRoom.put("chatRoomName", chatName);
                                 chatRoom.put(getString(R.string.messages_collection), "");
+                                chatRoom.put("type", "Classic");
 
                                 chatRoomsRef.child(key).setValue(chatRoom);
                             }
@@ -163,6 +164,7 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
                     chatRoom.put("users", chatRoomUsers);
                     chatRoom.put("chatRoomName", chatRoomName);
                     chatRoom.put(getString(R.string.messages_collection), "");
+                    chatRoom.put("type", "Classic");
 
                     chatRoomsRef.push().setValue(chatRoom);
                 }
@@ -198,6 +200,7 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
                     final String chatRoomId = dataSnapshot.getKey();
                     boolean chatRoomExists = false;
                     String chatRoomName = dataSnapshot.child("chatRoomName").getValue(String.class);
+                    String chatRoomType = dataSnapshot.child("type").getValue(String.class);
 
                     for(ChatRoom chatRoom: chatRooms) {
                         if(chatRoomId.equals(chatRoom.getChatRoomId())) {
@@ -215,7 +218,7 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
                             }
                         }
 
-                        ChatRoom chatRoom = new ChatRoom(chatRoomId, chatRoomName, chatRoomUsers, "", "", "");
+                        ChatRoom chatRoom = new ChatRoom(chatRoomId, chatRoomName, chatRoomUsers, "", "", "", chatRoomType);
                         chatRooms.add(chatRoom);
                         adapter.updateChatRoomList(chatRoom);
                     }
@@ -238,17 +241,17 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
 
                         @Override
                         public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                            //Not Used
                         }
 
                         @Override
                         public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
+                            //Not Used
                         }
 
                         @Override
                         public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                            //Not Used
                         }
 
                         @Override
@@ -263,17 +266,17 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                //Not Used
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
+                //Not Used
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                //Not Used
             }
 
             @Override
@@ -297,7 +300,6 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
         bundle.putSerializable("ChatRoom", chatRooms.get(position));
         intent.putExtras(bundle);
         startActivity(intent);
-        Log.d("Listener", "Clicked from chatroom: " + chatRooms.get(position).getChatRoomName());
     }
 
     @Override

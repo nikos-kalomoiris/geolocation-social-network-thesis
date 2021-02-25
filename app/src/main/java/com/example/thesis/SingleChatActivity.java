@@ -166,22 +166,22 @@ public class SingleChatActivity extends FragmentActivity {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                //Not Used
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
+                //Not Used
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                //Not Used
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                //Not Used
             }
         });
     }

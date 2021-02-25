@@ -355,7 +355,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/directions_car/baseline_directions_car_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/event_available/baseline_event_available_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -365,8 +365,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_login_logo" />
+                            <entry key="outputName" value="ic_event_chat" />
                             <entry key="sourceFile" value="C:\Users\nikos\Desktop\Thesis\Images\location.svg" />
                           </map>
                         </option>

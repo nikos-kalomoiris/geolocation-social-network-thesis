@@ -149,6 +149,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     private SearchView findLocationSearchView;
     private ImageView target;
 
+    private DatabaseReference refreshNoteList;
+    private ChildEventListener refreshNoteListener;
+
     static DatabaseReference friendListRef;
 
     @Override
@@ -440,12 +443,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 }
             }
         }
+        chatRoomUsers.add(MainActivity.userObj);
 
-        //chatRoomUsers.add(MainActivity.userObj);
         chatRoom = new HashMap<>();
         chatRoom.put("users", chatRoomUsers);
         chatRoom.put("chatRoomName", chatRoomTitle);
         chatRoom.put(getString(R.string.messages_collection), "");
+        chatRoom.put("type", "Event");
     }
 
     private void setAddInterface(String action) {
@@ -602,7 +606,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                //TODO: pending
+                //Not used
             }
 
             @Override
@@ -623,7 +627,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                //TODO: pending
+                //Not used
             }
 
             @Override
@@ -669,19 +673,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                //Not Used
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                //Note currNote = dataSnapshot.getValue(Note.class);
                 String key = dataSnapshot.getKey();
                 removeNoteMarkFromMap(key);
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                //Not Used
             }
 
             @Override
@@ -728,10 +731,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void refreshNoteList(User noteUser, int action) {
-        DatabaseReference noteList = FirebaseDatabase.getInstance().getReference()
+        refreshNoteList = FirebaseDatabase.getInstance().getReference()
                 .child(getString(R.string.notes_collection));
 
-        noteList.addListenerForSingleValueEvent(new ValueEventListener() {
+        refreshNoteList.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot noteSnapshot: dataSnapshot.getChildren()) {
@@ -749,24 +752,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
                             for(int i = 0; i < noteMarkers.size(); i++) {
                                 if(noteMarkers.get(i).getNote().getAuthor().getuId().equals(noteUser.getuId())) {
-                                    Log.d("Note Removed", "From user: " + noteMarkers.get(i).getNote().getAuthor().getuDisplayName());
-                                    Log.d("Note Removed", "Note title: " + noteMarkers.get(i).getNote().getNoteTitle());
-//                                    noteMarkers.remove(i);
-//                                    clusterManager.removeItem(marker);
                                     removeEventMarkOnMap(key);
                                     break;
                                 }
                             }
-                            //noteMarkers.remove(marker);
-                            //noteClusterManager.clearItems();
-                            //noteClusterManager.addItems(noteMarkers);
 
                         }
 
                     }
                 }
                 clusterManager.cluster();
-                //noteClusterManager.cluster();
             }
 
             @Override
@@ -789,11 +784,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
 
                 for(String participantId: currEvent.getParticipants()) {
-
-//                     if(currEvent.getAuthor().getuId().equals(user.getUid())) {
-//                         setEventMarkOnMap(currEvent, key);
-//                         break;
-//                     }
 
                     if(participantId.equals(user.getUid())) {
                         setEventMarkOnMap(currEvent, key);
@@ -868,7 +858,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                double duration = 999999999;
+                double duration = 999999999; // A big number for min duration calculation
                 for(DirectionsRoute route: result.routes) {
                     List<com.google.maps.model.LatLng> decodedPath = PolylineEncoding.decode(route.overviewPolyline.getEncodedPath());
 

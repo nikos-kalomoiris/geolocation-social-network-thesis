@@ -129,15 +129,13 @@ public class UserLocationUpdateService extends Service {
                         }
                     }
                 },
-                Looper.myLooper()); // Looper.myLooper tells this to repeat forever until thread is destroyed
+                Looper.myLooper());
     }
 
     private void saveUserLocation(final UserLocation userLocation){
 
         try{
             Log.d(TAG, userLocation.toString());
-//            DatabaseReference userLocationRef = FirebaseDatabase.getInstance().getReference().child(getString(R.string.users_location_collection));
-//            userLocationRef.child(userLocation.getUser().getuId()).setValue(userLocation);
             dbController.saveUserLocation(userLocation);
         }catch (NullPointerException e){
             Log.d(TAG, "Service Stopped");
