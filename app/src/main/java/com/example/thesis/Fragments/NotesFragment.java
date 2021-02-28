@@ -46,8 +46,9 @@ public class NotesFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mainPager = getActivity().findViewById(R.id.mainPager); //Get mainViewPager to disable swipe in mapFragment
         user = FirebaseAuth.getInstance().getCurrentUser();
+        Log.d("Debug", "Notes List Created");
         createNotesListener();
-        setNotesListener();
+        firstTime = false;
     }
 
     @Override
@@ -63,18 +64,17 @@ public class NotesFragment extends Fragment {
 
         adapter = new NotesRecyclerViewAdapter(getContext(), notesList);
         recyclerView.setAdapter(adapter);
-
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("Debug", "ProfileFragment - onResume");
+        Log.d("Debug", "NotesFragment - onResume");
         mainPager = getActivity().findViewById(R.id.mainPager);
         mainPager.setUserInputEnabled(true);
         if(!firstTime) {
-            notesRef.addChildEventListener(notesListener);
+            setNotesListener();
         }
     }
 
@@ -82,22 +82,27 @@ public class NotesFragment extends Fragment {
     public void onPause() {
         super.onPause();
         notesList.clear();
-        notesRef.removeEventListener(notesListener);
+        if(notesListener != null) {
+            notesRef.removeEventListener(notesListener);
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         notesList.clear();
-        notesRef.removeEventListener(notesListener);
+//        if(notesListener != null) {
+//            notesRef.removeEventListener(notesListener);
+//        }
+
     }
 
     private void setNotesListener() {
+        notesList.clear();
         notesRef = FirebaseDatabase.getInstance().getReference()
                 .child(getString(R.string.notes_collection));
 
         notesRef.addChildEventListener(notesListener);
-        firstTime = true;
     }
 
     private void createNotesListener() {

@@ -48,7 +48,7 @@ public class EventsFragment extends Fragment {
         mainPager = getActivity().findViewById(R.id.mainPager); //Get mainViewPager to disable swipe in mapFragment
         user = FirebaseAuth.getInstance().getCurrentUser();
         createEventsListener();
-        setEventsListener();
+        firstTime = false;
     }
 
     @Override
@@ -75,7 +75,7 @@ public class EventsFragment extends Fragment {
         mainPager = getActivity().findViewById(R.id.mainPager);
         mainPager.setUserInputEnabled(true);
         if(!firstTime) {
-            eventsRef.addChildEventListener(eventsListener);
+            setEventsListener();
         }
     }
 
@@ -83,22 +83,27 @@ public class EventsFragment extends Fragment {
     public void onPause() {
         super.onPause();
         eventsList.clear();
-        eventsRef.removeEventListener(eventsListener);
+        if(eventsListener != null) {
+            eventsRef.removeEventListener(eventsListener);
+        }
+
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         eventsList.clear();
-        eventsRef.removeEventListener(eventsListener);
+//        if(eventsListener != null) {
+//            eventsRef.removeEventListener(eventsListener);
+//        }
     }
 
     private void setEventsListener() {
+        eventsList.clear();
         eventsRef = FirebaseDatabase.getInstance().getReference()
                 .child(getString(R.string.events_collection));
 
         eventsRef.addChildEventListener(eventsListener);
-        firstTime = true;
     }
 
     private void createEventsListener() {

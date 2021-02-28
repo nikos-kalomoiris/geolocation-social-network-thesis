@@ -82,16 +82,19 @@ public class EventDetailsActivity extends AppCompatActivity {
         int index = 0;
         for(String userId: event.getParticipants()) {
             for (User user: friendList) {
+                participants += user.getuDisplayName() + ", ";
                 if(user.getuId().equals(userId)) {
-                    if(index == event.getParticipants().size() - 1) {
-                        participants += user.getuDisplayName();
-                    }
-                    else {
-                        participants += user.getuDisplayName() + ", ";
-                    }
+                    //participants += user.getuDisplayName() + ", ";
+//                    if(index == event.getParticipants().size() - 1) {
+//                        participants += user.getuDisplayName();
+//                    }
+//                    else {
+//                        participants += user.getuDisplayName() + ", ";
+//                    }
                 }
             }
         }
+
         eventParticipants.setText(participants);
         //noteDuration.setText("Duration: " + note.getDuration());
     }

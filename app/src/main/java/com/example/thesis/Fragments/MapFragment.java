@@ -149,8 +149,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     private SearchView findLocationSearchView;
     private ImageView target;
 
-    private DatabaseReference refreshNoteList;
-    private ChildEventListener refreshNoteListener;
+    private boolean firstTime = true;
+
+    private DatabaseReference refreshNoteList, eventsList, notesList;
+    private ChildEventListener friendListListener, eventsListListener, notesListListener;
 
     static DatabaseReference friendListRef;
 
@@ -557,10 +559,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         clusterMarkers.clear();
         friendListRef = FirebaseDatabase.getInstance().getReference()
                 .child(getString(R.string.users_collection))
-                .child(user.getUid())
+                .child(FirebaseAuth.getInstance().getUid())
                 .child(getString(R.string.friends_list_collection));
 
-        friendListRef.addChildEventListener(new ChildEventListener() {
+        friendListListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
@@ -589,7 +591,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                             clusterManager.addItem(userMarker);
                             refreshNoteList(userLocation.getUser(), ACTION_ADD);
                             clusterManager.cluster();
-                            friendListModel.setMarkers(clusterMarkers);
+                            //friendListModel.setMarkers(clusterMarkers);
 
                         } catch (NullPointerException ex) {
                             Log.e("Error", ex.getMessage());
@@ -621,7 +623,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                         break;
                     }
                 }
-                friendListModel.setMarkers(clusterMarkers);
+                //friendListModel.setMarkers(clusterMarkers);
                 clusterManager.cluster();
             }
 
@@ -634,14 +636,100 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 databaseError.toException().printStackTrace();
             }
-        });
+        };
+
+        friendListRef.addChildEventListener(friendListListener);
+        firstTime = false;
     }
 
-    private void setNotesListener() {
-        DatabaseReference notesList = FirebaseDatabase.getInstance().getReference()
-                .child(getString(R.string.notes_collection));
+//    private void setFriendListListener() {
+//        clusterMarkers.clear();
+//        friendListRef = FirebaseDatabase.getInstance().getReference()
+//                .child(getString(R.string.users_collection))
+//                .child(user.getUid())
+//                .child(getString(R.string.friends_list_collection));
+//
+//        friendListRef.addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//                DatabaseReference singleUserLocation = FirebaseDatabase.getInstance().getReference()
+//                        .child(getString(R.string.users_location_collection))
+//                        .child(dataSnapshot.getValue(String.class));
+//
+//                singleUserLocation.addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//
+//                        try {
+//
+//                            UserLocation userLocation = dataSnapshot.getValue(UserLocation.class);
+//                            Uri iconPicture = Uri.parse(userLocation.getUser().getuIconUrl());
+//                            Log.d("friendList", "User: " + userLocation.getUser().getuDisplayName());
+//                            LatLng ltLnPoint = new LatLng(userLocation.getGeoPoint().getLatitude(),
+//                                    userLocation.getGeoPoint().getLongitude());
+//
+//                            String title = userLocation.getUser().getuDisplayName();
+//                            String snippet = userLocation.getUser().getuEmail();
+//
+//                            ClusterMarker userMarker = new ClusterMarker("User", ltLnPoint, title, snippet, iconPicture, userLocation.getUser());
+//
+//                            clusterMarkers.add(userMarker);
+//                            clusterManager.addItem(userMarker);
+//                            refreshNoteList(userLocation.getUser(), ACTION_ADD);
+//                            clusterManager.cluster();
+//                            friendListModel.setMarkers(clusterMarkers);
+//
+//                        } catch (NullPointerException ex) {
+//                            Log.e("Error", ex.getMessage());
+//                        }
+//
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//                        Log.e("Error", databaseError.getMessage());
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                //Not used
+//            }
+//
+//            @Override
+//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+//                Log.d("Debug", "Data Deleted");
+//
+//                for(ClusterMarker userMarker: clusterMarkers) {
+//                    if(userMarker.getUser().getuId().equals(dataSnapshot.getValue(String.class))) {
+//                        refreshNoteList(userMarker.getUser(), ACTION_DELETE);
+//                        clusterMarkers.remove(userMarker);
+//                        clusterManager.removeItem(userMarker);
+//                        break;
+//                    }
+//                }
+//                friendListModel.setMarkers(clusterMarkers);
+//                clusterManager.cluster();
+//            }
+//
+//            @Override
+//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                //Not used
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                databaseError.toException().printStackTrace();
+//            }
+//        });
+//    }
 
-        notesList.addChildEventListener(new ChildEventListener() {
+    private void setNotesListener() {
+        notesList = FirebaseDatabase.getInstance().getReference()
+                .child(getString(R.string.notes_collection));
+        notesListListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
@@ -691,7 +779,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 databaseError.toException().printStackTrace();
             }
-        });
+        };
+        notesList.addChildEventListener(notesListListener);
     }
 
     private void setNoteMarkOnMap(Note currNote, String key) {
@@ -772,10 +861,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void setEventsListener() {
-        DatabaseReference eventsList = FirebaseDatabase.getInstance().getReference()
+        eventsList = FirebaseDatabase.getInstance().getReference()
                 .child(getString(R.string.events_collection));
 
-        eventsList.addChildEventListener(new ChildEventListener() {
+        eventsListListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
@@ -813,7 +902,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        };
+
+        eventsList.addChildEventListener(eventsListListener);
     }
 
     private void setEventMarkOnMap(Event currEvent, String key) {
@@ -1077,9 +1168,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             Bundle bundle = new Bundle();
             bundle.putSerializable("event", item.getEvent());
+            Log.d("Debug Event", "When calling event: " + item.getEvent().getParticipants());
             ArrayList<User> friends = new ArrayList<>();
+            int index = 0;
+            Log.d("Debug", "Array: " + clusterMarkers);
             for(ClusterMarker marker: clusterMarkers) {
                 friends.add(marker.getUser());
+                Log.d("Debug", "User is: " + friends.get(index));
+                index ++;
             }
             bundle.putSerializable("friendList", friends);
             intent.putExtras(bundle);
@@ -1093,7 +1189,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             gMapsDriveModeIntent(item);
         }
         else{
-            createMarkerDialog(item);
+            if(!item.getTag().equals("User")) {
+                createMarkerDialog(item);
+            }
+            else {
+                Toast.makeText(getContext(), "User " + item.getUser().getuDisplayName() + ".", Toast.LENGTH_SHORT).show();
+            }
         }
 
     }
@@ -1188,23 +1289,44 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public void onResume() {
         super.onResume();
         Log.d("Debug", "onResume - MapFragment");
-        updateFriendsLocationRunnable();
         mainPager = getActivity().findViewById(R.id.mainPager);
         mainPager.setUserInputEnabled(false);
+        if(!firstTime) {
+            //friendListRef.addChildEventListener(friendListListener);
+            setFriendListListener();
+            setEventsListener();
+            setNotesListener();
+        }
+        updateFriendsLocationRunnable();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         stopUpdateFriendsLocationRunnable();
-        //friendListRef.removeEventListener();
+        noteMarkers.clear();
+        eventMarkers.clear();
+        //clusterMarkers.clear();
+        friendListRef.removeEventListener(friendListListener);
+        eventsList.removeEventListener(eventsListListener);
+        notesList.removeEventListener(notesListListener);
+        clusterManager.clearItems();
+//        for(ClusterMarker marker: clusterMarkers) {
+//            clusterManager.removeItem(marker);
+//        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("Debug", "Destroyed - MapFragment");
         stopUpdateFriendsLocationRunnable();
+        clusterMarkers.clear();
+        noteMarkers.clear();
+        eventMarkers.clear();
+        Log.d("Debug", "Destroyed - MapFragment");
+        friendListRef.removeEventListener(friendListListener);
+        eventsList.removeEventListener(eventsListListener);
+        notesList.removeEventListener(notesListListener);
     }
 
     @Override

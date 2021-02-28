@@ -1,6 +1,7 @@
 package com.example.thesis.Utility.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
         holder.detailsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("Debug Event", "Parts: " + eventsList.get(position).getEvent().getParticipants());
                 listOptionsClick.clickDetails(eventsList.get(position));
             }
         });

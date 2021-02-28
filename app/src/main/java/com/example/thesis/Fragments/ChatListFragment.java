@@ -210,14 +210,15 @@ public class ChatListFragment extends Fragment implements ChatListRecyclerViewAd
                     }
 
                     if(!chatRoomExists) {
-                        if(chatRoomUsers.size() <= 2 ) {
-                            for(User user: chatRoomUsers) {
-                                if(!user.getuId().equals(FirebaseAuth.getInstance().getUid())) {
-                                    chatRoomName = user.getuDisplayName();
+                        if(chatRoomType.equals("Classic")) {
+                            if(chatRoomUsers.size() <= 2 ) {
+                                for(User user: chatRoomUsers) {
+                                    if(!user.getuId().equals(FirebaseAuth.getInstance().getUid())) {
+                                        chatRoomName = user.getuDisplayName();
+                                    }
                                 }
                             }
                         }
-
                         ChatRoom chatRoom = new ChatRoom(chatRoomId, chatRoomName, chatRoomUsers, "", "", "", chatRoomType);
                         chatRooms.add(chatRoom);
                         adapter.updateChatRoomList(chatRoom);
