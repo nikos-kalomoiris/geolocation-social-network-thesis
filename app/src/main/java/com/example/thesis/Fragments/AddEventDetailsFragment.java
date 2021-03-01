@@ -3,8 +3,11 @@ package com.example.thesis.Fragments;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,6 +84,20 @@ public class AddEventDetailsFragment extends Fragment {
         //MatButton Views
         addParticipants = (MaterialButton) v.findViewById(R.id.addParticipantsBtn);
         addEvent = (MaterialButton) v.findViewById(R.id.addEventBtn);
+
+        charsLimitTitle.setText("0/" + TITLE_MAX_CHARS);
+        charsLimitDesc.setText("0/" + MAX_CHARS);
+
+        InputFilter[] descFilterArray = new InputFilter[1];
+        InputFilter[] titleFilterArray = new InputFilter[1];
+        descFilterArray[0] = new InputFilter.LengthFilter(MAX_CHARS);
+        titleFilterArray[0] = new InputFilter.LengthFilter(TITLE_MAX_CHARS);
+
+        titleInput.setFilters(titleFilterArray);
+        descInput.setFilters(descFilterArray);
+
+        charLimitChange();
+        titleCharLimitChange();
 
         DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
 
@@ -178,5 +195,54 @@ public class AddEventDetailsFragment extends Fragment {
 
 
         }
+    }
+
+    private void charLimitChange() {
+        descInput.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int charsLength = s.toString().length();
+
+                if (charsLength <= MAX_CHARS) {
+                    String currLength = String.valueOf(charsLength);
+                    charsLimitDesc.setText(currLength + "/" + MAX_CHARS);
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //Not Used
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //Not Used
+            }
+        });
+    }
+
+    private void titleCharLimitChange() {
+        titleInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int charsLength = s.toString().length();
+
+                if (charsLength <= TITLE_MAX_CHARS) {
+                    String currLength = String.valueOf(charsLength);
+                    charsLimitTitle.setText(currLength + "/" + TITLE_MAX_CHARS);
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //Not Used
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //Not Used
+            }
+        });
     }
 }

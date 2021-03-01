@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -19,6 +20,12 @@ import com.example.thesis.DatabaseModels.User;
 import com.example.thesis.Utility.Adapters.Markers.ClusterMarker;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textview.MaterialTextView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.clustering.ClusterItem;
 
 import java.io.IOException;
@@ -78,25 +85,29 @@ public class EventDetailsActivity extends AppCompatActivity {
         }
         eventDate.setText("Event Date: " + event.getDate());
 
-        String participants = "";
-        int index = 0;
-        for(String userId: event.getParticipants()) {
-            for (User user: friendList) {
-                participants += user.getuDisplayName() + ", ";
-                if(user.getuId().equals(userId)) {
-                    //participants += user.getuDisplayName() + ", ";
-//                    if(index == event.getParticipants().size() - 1) {
-//                        participants += user.getuDisplayName();
-//                    }
-//                    else {
-//                        participants += user.getuDisplayName() + ", ";
-//                    }
-                }
-            }
-        }
+        DatabaseReference users = FirebaseDatabase.getInstance().getReference()
+                .child(getString(R.string.users_collection));
 
-        eventParticipants.setText(participants);
-        //noteDuration.setText("Duration: " + note.getDuration());
+        users.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String participants = "Participants: ";
+                for(DataSnapshot userSnap: dataSnapshot.getChildren()) {
+                    User user = userSnap.getValue(User.class);
+                    for(String participantId: event.getParticipants()) {
+                        if(participantId.equals(user.getuId())) {
+                            participants += user.getuDisplayName() + ", ";
+                        }
+                    }
+                }
+                eventParticipants.setText(participants);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("Error", databaseError.getMessage());
+            }
+        });
     }
 
     private String convertToAddress(GeoPoint coordinates) {

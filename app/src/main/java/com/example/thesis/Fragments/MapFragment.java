@@ -416,7 +416,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 String noteText = data.getStringExtra("text");
                 String noteDuration = data.getStringExtra("duration");
                 String noteTitle = data.getStringExtra("title");
-                note = new Note(noteTitle, noteText, noteDuration, MainActivity.userObj, null);
+                note = new Note(noteTitle, noteText, noteDuration, MainActivity.userObj, null, String.valueOf(getTimestamp()));
                 setAddInterface("Set Note");
             }
             else if(requestCode == LAUNCH_ADD_EVENT_ACTIVITY) {
@@ -509,7 +509,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         userLocation = new UserLocation(tempUserGeopoint, null, user);
         DatabaseReference userLocationRef = FirebaseDatabase.getInstance().getReference().child(getActivity().getString(R.string.users_location_collection));
         userLocationRef.child(userLocation.getUser().getuId()).setValue(userLocation);
-        //dbController.saveUserLocation(userLocation);
     }
 
     private void updateFriendsLocation() {
@@ -591,7 +590,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                             clusterManager.addItem(userMarker);
                             refreshNoteList(userLocation.getUser(), ACTION_ADD);
                             clusterManager.cluster();
-                            //friendListModel.setMarkers(clusterMarkers);
 
                         } catch (NullPointerException ex) {
                             Log.e("Error", ex.getMessage());
@@ -623,7 +621,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                         break;
                     }
                 }
-                //friendListModel.setMarkers(clusterMarkers);
                 clusterManager.cluster();
             }
 
@@ -641,90 +638,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         friendListRef.addChildEventListener(friendListListener);
         firstTime = false;
     }
-
-//    private void setFriendListListener() {
-//        clusterMarkers.clear();
-//        friendListRef = FirebaseDatabase.getInstance().getReference()
-//                .child(getString(R.string.users_collection))
-//                .child(user.getUid())
-//                .child(getString(R.string.friends_list_collection));
-//
-//        friendListRef.addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//                DatabaseReference singleUserLocation = FirebaseDatabase.getInstance().getReference()
-//                        .child(getString(R.string.users_location_collection))
-//                        .child(dataSnapshot.getValue(String.class));
-//
-//                singleUserLocation.addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//
-//                        try {
-//
-//                            UserLocation userLocation = dataSnapshot.getValue(UserLocation.class);
-//                            Uri iconPicture = Uri.parse(userLocation.getUser().getuIconUrl());
-//                            Log.d("friendList", "User: " + userLocation.getUser().getuDisplayName());
-//                            LatLng ltLnPoint = new LatLng(userLocation.getGeoPoint().getLatitude(),
-//                                    userLocation.getGeoPoint().getLongitude());
-//
-//                            String title = userLocation.getUser().getuDisplayName();
-//                            String snippet = userLocation.getUser().getuEmail();
-//
-//                            ClusterMarker userMarker = new ClusterMarker("User", ltLnPoint, title, snippet, iconPicture, userLocation.getUser());
-//
-//                            clusterMarkers.add(userMarker);
-//                            clusterManager.addItem(userMarker);
-//                            refreshNoteList(userLocation.getUser(), ACTION_ADD);
-//                            clusterManager.cluster();
-//                            friendListModel.setMarkers(clusterMarkers);
-//
-//                        } catch (NullPointerException ex) {
-//                            Log.e("Error", ex.getMessage());
-//                        }
-//
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//                        Log.e("Error", databaseError.getMessage());
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                //Not used
-//            }
-//
-//            @Override
-//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-//                Log.d("Debug", "Data Deleted");
-//
-//                for(ClusterMarker userMarker: clusterMarkers) {
-//                    if(userMarker.getUser().getuId().equals(dataSnapshot.getValue(String.class))) {
-//                        refreshNoteList(userMarker.getUser(), ACTION_DELETE);
-//                        clusterMarkers.remove(userMarker);
-//                        clusterManager.removeItem(userMarker);
-//                        break;
-//                    }
-//                }
-//                friendListModel.setMarkers(clusterMarkers);
-//                clusterManager.cluster();
-//            }
-//
-//            @Override
-//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                //Not used
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                databaseError.toException().printStackTrace();
-//            }
-//        });
-//    }
 
     private void setNotesListener() {
         notesList = FirebaseDatabase.getInstance().getReference()
@@ -746,8 +659,35 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if(dataSnapshot.exists() || currNote.getAuthor().getuId().equals(user.getUid())) {
-                            Log.d("Added", "Note added: " + dataSnapshot.exists() + " " + dataSnapshot.getValue(String.class));
-                            setNoteMarkOnMap(currNote, key);
+
+                            Long timestamp = Long.parseLong(currNote.getTimestamp()) * 1000;
+                            Long deletionTime = timestamp;
+                            Long currentTime = getTimestamp()*1000;
+                            String duration = currNote.getDuration();
+
+                            switch (duration) {
+                                case "min": {
+                                    deletionTime += 1800000;
+                                    break;
+                                }
+                                case "med": {
+                                    deletionTime += 3600000;
+                                    break;
+                                }
+                                case "max": {
+                                    deletionTime += 10800000;
+                                    break;
+                                }
+                            }
+
+                            if(currentTime >= deletionTime) {
+                                Log.d("Debug", "Delete note");
+                                notesList.child(key).removeValue();
+                            } else {
+                                Log.d("Added", "Note added: " + dataSnapshot.exists() + " " + dataSnapshot.getValue(String.class));
+                                setNoteMarkOnMap(currNote, key);
+                            }
+
                         }
                     }
 
@@ -1342,6 +1282,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void clickDetails(ClusterMarker object) {
         openDetails(object);
+    }
+
+    private Long getTimestamp() {
+        return System.currentTimeMillis()/1000;
     }
 }
 

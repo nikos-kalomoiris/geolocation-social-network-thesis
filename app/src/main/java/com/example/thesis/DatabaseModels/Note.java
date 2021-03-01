@@ -9,17 +9,19 @@ public class Note implements Serializable{
     private String noteTitle ,noteText, duration;
     private GeoPoint geoPoint;
     private User author;
+    private String timestamp;
 
     public Note() {
 
     }
 
-    public Note(String noteTitle, String noteText, String duration, User author, GeoPoint geoPoint) {
+    public Note(String noteTitle, String noteText, String duration, User author, GeoPoint geoPoint, String timestamp) {
         this.noteTitle = noteTitle;
         this.noteText = noteText;
         this.duration = duration;
         this.author = author;
         this.geoPoint = geoPoint;
+        this.timestamp = timestamp;
     }
 
     public String getNoteTitle() {
@@ -60,6 +62,14 @@ public class Note implements Serializable{
 
     public void setGeoPoint(GeoPoint geoPoint) {
         this.geoPoint = geoPoint;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 
     @NonNull

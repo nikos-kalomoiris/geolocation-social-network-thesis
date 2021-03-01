@@ -84,6 +84,18 @@
                 tools:layout_editor_absoluteX="16dp" />
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/noteTimestampText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="32dp"
+                android:elevation="16dp"
+                android:text="Posted: "
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@+id/noteLocationText"
+                tools:layout_editor_absoluteX="0dp" />
+
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/noteDurationText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -92,7 +104,7 @@
                 android:elevation="16dp"
                 android:text="Note Duration: "
                 android:textSize="18sp"
-                app:layout_constraintTop_toBottomOf="@+id/noteLocationText"
+                app:layout_constraintTop_toBottomOf="@+id/noteTimestampText"
                 tools:layout_editor_absoluteX="0dp" />
 
             <com.google.android.material.button.MaterialButton
